@@ -1,0 +1,60 @@
+api/auth/donor/login
+api/auth/donor/signup
+api/auth/donor/registration
+
+// profile alter
+api/auth/donor/top_10_donors
+api/auth/donor/edit/[id]
+api/auth/donor/get/[id]
+
+api/auth/donor/edit/[id]
+api/donate/add_donation
+api/donate/edit_donation
+api/donate/delete_donation
+api/donate/get_all_donations
+api/donate/get_donation/{id}
+
+donation{
+	title
+	description
+	photo
+	location
+	date time
+	donor
+}
+
+donor {
+	user_donor
+	name
+	age
+	address
+	organization
+	pan
+	aadhaar
+	phone
+	email
+	organization certificate
+	photo
+	signature
+}
+
+user_donor {
+	username
+	email id
+	password
+}
+
+
+user_recipient{
+	name	
+	username
+	email id
+	password
+}
+
+models:
+    user_donors
+    user_recipients
+    donors
+    donations
+    donor_for_verification (after verification they added to donors table, and removed from this table)
