@@ -77,7 +77,7 @@ const DonationFormModal = ({ isOpen, onClose, needDetails }) => {
                 {needDetails && (
                     <div className="p-3 mb-4 rounded-lg border border-green-500/50 bg-green-50/50 text-sm font-medium">
                         <p className="font-semibold text-green-700">Fulfilling Need For:</p>
-                        <p className="opacity-80">**{needDetails.name}** needs **{needDetails.need}** ({needDetails.type})</p>
+                        <p className="opacity-80">{needDetails.name} needs {needDetails.need} ({needDetails.type})</p>
                     </div>
                 )}
 
