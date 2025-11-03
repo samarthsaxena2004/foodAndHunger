@@ -10,17 +10,16 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="users")
-public class UserModel{
+public class User{
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment
     private int id;
-    // setters
-    /* getters and setters */
-    // getters
+
     @Setter
     @Getter
     private String username;
+
     @Setter
     @Getter
     private String email;
@@ -28,6 +27,7 @@ public class UserModel{
     @Setter
     @Getter
     private String password;
+
     @CreationTimestamp
     @Column(name="created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -37,8 +37,8 @@ public class UserModel{
     private LocalDateTime updatedAt;
 
     // constructors
-    public UserModel(){}
-    public UserModel( String username, String email, String password){
+    public User(){}
+    public User( String username, String email, String password){
         this.username = username;
         this.email = email;
         this.password = password;

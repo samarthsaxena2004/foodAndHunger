@@ -16,6 +16,9 @@ public class DonationModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment
     private int id;
 
+    @Getter
+    @Setter
+    private int donorId;
     @Setter
     @Getter
     private String title;
@@ -40,7 +43,8 @@ public class DonationModel {
     private LocalDateTime updatedAt;
 
     public DonationModel(){}
-    public DonationModel(String title, String description, byte[] photo, String location, String type){
+    public DonationModel(int donorId, String title, String description, byte[] photo, String location, String type){
+        this.donorId =  donorId;
         this.title = title;
         this.description = description;
         this.photo = photo;
