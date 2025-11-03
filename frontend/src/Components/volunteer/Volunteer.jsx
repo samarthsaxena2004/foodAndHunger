@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 export default function VolunteerPage() {
-  // --- Volunteer Opportunities ---
   const opportunities = [
     {
       title: "Restaurant Pickup Driver",
@@ -26,14 +25,12 @@ export default function VolunteerPage() {
     },
   ];
 
-  // --- Current Volunteers ---
   const [volunteers, setVolunteers] = useState([
     { name: "Ananya Sharma", role: "Food Pickup & Delivery", availability: "Weekends" },
     { name: "Ravi Patel", role: "Cooking / Meal Preparation", availability: "Weekdays" },
     { name: "Meera Das", role: "Awareness Campaigns", availability: "Evenings" },
   ]);
 
-  // --- Form State ---
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,26 +49,26 @@ export default function VolunteerPage() {
       return;
     }
     setVolunteers([formData, ...volunteers]);
-    alert("Thank you for volunteering! 🌟");
+    alert("Thank you for volunteering!");
     setFormData({ name: "", email: "", phone: "", role: "", availability: "" });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0b1e2d] text-gray-900 dark:text-gray-100 transition-colors duration-500 px-6 py-10 flex flex-col items-center">
+    <div className="min-h-screen px-6 py-10 flex flex-col items-center">
       <div className="max-w-7xl w-full">
-        {/* Header */}
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-2">Volunteer — Food & Hunger</h1>
-          <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p>
             Join us to recover surplus food and feed communities in need. Choose a
             role, tell us when you're available, and help us make a difference.
           </p>
         </header>
 
-        {/* 2-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Left Side — Opportunities */}
-          <section className="lg:col-span-1 bg-white dark:bg-[#12283d] border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm h-fit">
+          <section
+            className="lg:col-span-1 rounded-xl p-6"
+            style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
+          >
             <h2 className="text-2xl font-semibold mb-6 text-center">
               Open Opportunities
             </h2>
@@ -79,17 +76,24 @@ export default function VolunteerPage() {
               {opportunities.map((opp, idx) => (
                 <div
                   key={idx}
-                  className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-md hover:border-blue-500 transition"
+                  className="rounded-xl p-5"
+                  style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
                 >
                   <h3 className="text-lg font-medium mb-1">{opp.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{opp.desc}</p>
-                  <div className="flex flex-wrap justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm mb-2">{opp.desc}</p>
+                  <div className="flex justify-between text-sm">
                     <span>📍 {opp.location}</span>
                     <span>⏰ {opp.time}</span>
                   </div>
                   <div className="mt-4 flex justify-between items-center">
-                    <span className="text-sm text-gray-500">{opp.spots} spots</span>
-                    <button className="border border-gray-300 dark:border-gray-600 px-3 py-1 rounded-md text-sm hover:bg-blue-600 hover:text-white transition">
+                    <span className="text-sm">{opp.spots} spots</span>
+                    <button
+                      className="px-3 py-1 rounded-md text-sm"
+                      style={{
+                        border: "1px solid #00a03d",
+                        background: "rgb(0 111 49 / 31%)",
+                      }}
+                    >
                       Join
                     </button>
                   </div>
@@ -98,26 +102,26 @@ export default function VolunteerPage() {
             </div>
           </section>
 
-          {/* Right Side — Volunteers & Form */}
           <div className="lg:col-span-2 space-y-10">
-            {/* Current Volunteers */}
-            <section className="bg-white dark:bg-[#12283d] border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-6">
-              <h2 className="text-2xl font-semibold mb-6 text-center text-green-700 dark:text-green-400">
+            <section
+              className="rounded-xl p-6"
+              style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
+            >
+              <h2 className="text-2xl font-semibold mb-6 text-center">
                 Current Volunteers
               </h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {volunteers.map((vol, index) => (
                   <div
                     key={index}
-                    className="bg-white dark:bg-[#0b1e2d] border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-md transition"
+                    className="rounded-xl p-5"
+                    style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
                   >
-                    <h3 className="text-lg font-semibold text-green-700 dark:text-green-400 mb-1">
-                      {vol.name}
-                    </h3>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm mb-1">
+                    <h3 className="text-lg font-semibold mb-1">{vol.name}</h3>
+                    <p className="text-sm mb-1">
                       <span className="font-medium">Role:</span> {vol.role}
                     </p>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm">
+                    <p className="text-sm">
                       <span className="font-medium">Availability:</span>{" "}
                       {vol.availability || "Not specified"}
                     </p>
@@ -126,58 +130,42 @@ export default function VolunteerPage() {
               </div>
             </section>
 
-            {/* Volunteer Form */}
-            <section className="bg-white dark:bg-[#12283d] border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-8">
-              <h2 className="text-3xl font-bold text-center mb-4 text-green-700 dark:text-green-400">
+            <section
+              className="rounded-xl p-8"
+              style={{ border: "2px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
+            >
+              <h2 className="text-3xl font-bold text-center mb-4">
                 Become a Volunteer
               </h2>
-              <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
-                Join hands in reducing food waste and feeding the hungry. Together, we can
-                make a lasting impact.
+              <p className="text-center mb-8">
+                Join hands in reducing food waste and feeding the hungry.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name */}
-                <div>
-                  <label className="block mb-2 font-medium">Full Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#0b1e2d] focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
+                {["name", "email", "phone", "availability"].map((field) => (
+                  <div key={field}>
+                    <label className="block mb-2 font-medium capitalize">
+                      {field === "email"
+                        ? "Email Address"
+                        : field === "phone"
+                          ? "Phone Number"
+                          : field}
+                    </label>
+                    <input
+                      type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
+                      name={field}
+                      value={formData[field]}
+                      onChange={handleChange}
+                      required={field === "name"}
+                      className="w-full px-4 py-3 rounded-lg"
+                      style={{
+                        border: "1px solid #00a03d",
+                        background: "rgb(0 111 49 / 31%)",
+                      }}
+                    />
+                  </div>
+                ))}
 
-                {/* Email */}
-                <div>
-                  <label className="block mb-2 font-medium">Email Address</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#0b1e2d] focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label className="block mb-2 font-medium">Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Enter your phone number"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#0b1e2d] focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-
-                {/* Role */}
                 <div>
                   <label className="block mb-2 font-medium">Area of Interest</label>
                   <select
@@ -185,7 +173,8 @@ export default function VolunteerPage() {
                     value={formData.role}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#0b1e2d] focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-4 py-3 rounded-lg"
+                    style={{ border: "1px solid #00a03d", background: "rgb(0 111 49 / 31%)" }}
                   >
                     <option value="">Select your role</option>
                     <option value="Food Pickup & Delivery">Food Pickup & Delivery</option>
@@ -197,32 +186,22 @@ export default function VolunteerPage() {
                   </select>
                 </div>
 
-                {/* Availability */}
-                <div>
-                  <label className="block mb-2 font-medium">Availability</label>
-                  <input
-                    type="text"
-                    name="availability"
-                    value={formData.availability}
-                    onChange={handleChange}
-                    placeholder="e.g. Weekends, Weekdays, Evenings"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#0b1e2d] focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-
-                {/* Submit */}
                 <div className="flex justify-center">
                   <button
                     type="submit"
-                    className="w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition-all duration-200"
+                    className="px-8 py-3 rounded-lg"
+                    style={{
+                      border: "2px solid #00a03d",
+                      background: "rgb(0 111 49 / 31%)",
+                    }}
                   >
                     Submit Application
                   </button>
                 </div>
               </form>
 
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
-                Thank you for your willingness to help those in need 💚
+              <p className="text-center text-sm mt-8">
+                Thank you for your willingness to help those in need.
               </p>
             </section>
           </div>
