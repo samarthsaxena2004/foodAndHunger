@@ -7,6 +7,7 @@ import com.foodandhunger.backend.structures.ServicesStruct;
 import com.foodandhunger.backend.utils.LLogging;
 import com.sun.security.auth.module.LdapLoginModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -88,5 +89,20 @@ public class DonationService implements ServicesStruct<DonationModel> {
         }catch (Exception e){
             return false;
         }
+    }
+
+    @Override
+    public ResponseEntity<List<DonationModel>> search(String query) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Long> count() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Boolean> exists(int id) {
+        return null;
     }
 }

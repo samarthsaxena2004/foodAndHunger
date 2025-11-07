@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface DonationRepo extends JpaRepository<DonationModel, Integer> {
     boolean existsByDonorId(int donorId);
     Optional<DonationModel> findByDonorId(int donorId);
+
 }

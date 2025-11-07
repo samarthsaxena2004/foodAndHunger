@@ -12,20 +12,46 @@ public class RecipientModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Setter
+    @Getter
     private int userId;
+    @Setter
+    @Getter
     private String name;
+    @Setter
+    @Getter
     private int age;
+    @Setter
+    @Getter
     private String address;
+    @Setter
+    @Getter
     private String organizationName;
+    @Setter
+    @Getter
     private String pan;
+    @Setter
+    @Getter
     private String aadhaar;
+    @Setter
+    @Getter
     private String phone;
+    @Setter
+    @Getter
     private String email;
+    @Setter
+    @Getter
     private String organization_certificate_id;
 
     // Store binary data for images or certificates
+    @Getter
+    @Setter
     private byte[] organizationCertificate;
+    @Getter
+    @Setter
     private byte[] photo;
+    @Getter
+    @Setter
     private byte[] signature;
 
     public RecipientModel(){}

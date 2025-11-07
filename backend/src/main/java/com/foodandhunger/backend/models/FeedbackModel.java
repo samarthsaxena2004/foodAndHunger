@@ -28,4 +28,5 @@ public class FeedbackModel {
         this.message = message;
         this.star = star;
     }
+
 }

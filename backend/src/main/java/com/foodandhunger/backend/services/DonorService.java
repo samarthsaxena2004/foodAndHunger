@@ -5,6 +5,7 @@ import com.foodandhunger.backend.repository.DonorRepo;
 import com.foodandhunger.backend.structures.ServicesStruct;
 import com.foodandhunger.backend.utils.LLogging;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,7 +69,7 @@ public class DonorService implements ServicesStruct<DonorModel> {
     // ✅ Update donor by ID
     @Override
     public boolean updateById(int id, DonorModel donor) {
-        LLogging.info("updateDonorById()");
+       LLogging.info("updateDonorById()");
         try {
             DonorModel existing = donorRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Donor not found"));
@@ -82,6 +83,7 @@ public class DonorService implements ServicesStruct<DonorModel> {
             existing.setPhone(donor.getPhone());
             existing.setEmail(donor.getEmail());
             existing.setUserId(donor.getUserId());
+            existing.setPhoto(donor.getPhoto());
             donorRepository.save(existing); // ✅ Save after update
             LLogging.info("Donor updated with id: " + id);
             return true;
@@ -128,5 +130,20 @@ public class DonorService implements ServicesStruct<DonorModel> {
             LLogging.error(e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public ResponseEntity<List<DonorModel>> search(String query) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Long> count() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Boolean> exists(int id) {
+        return null;
     }
 }

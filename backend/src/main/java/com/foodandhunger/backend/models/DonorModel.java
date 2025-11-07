@@ -49,9 +49,15 @@ public class DonorModel {
     private String organization_certificate_id;
 
     // Store binary data for images or certificates
-    private byte[] organizationCertificate;
-    private byte[] photo;
-    private byte[] signature;
+    @Getter
+    @Setter
+    public byte[] organizationCertificate;
+    @Getter
+    @Setter
+    public byte[] photo;
+    @Getter
+    @Setter
+    public byte[] signature;
 
     @CreationTimestamp
     @Column(name="created_at", nullable = false, updatable = false)
