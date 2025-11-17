@@ -23,9 +23,13 @@ public class DonorModel {
     private int age;
     private String address;
     private String organizationName;
+    @Column(unique = true)
     private String pan;
+    @Column(unique = true)
     private String aadhaar;
+    @Column(unique = true)
     private String phone;
+    @Column(unique = true)
     private String email;
     private String location;
     private String organization_certificate_id;

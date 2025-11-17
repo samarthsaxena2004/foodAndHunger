@@ -49,6 +49,15 @@ public class FeedbackService implements ServicesStruct<FeedbackModel> {
     @Override
     public boolean create(FeedbackModel entity) {
         try {
+            boolean exist = feedbackRepo.existsByUserIdAndMessage(
+                    entity.getUserId(), entity.getMessage()
+            );
+
+            if (exist) {
+                LLogging.warn("Duplicate feedback ignored");
+                return false;
+            }
+
             feedbackRepo.save(entity);
             return true;
         } catch (Exception e) {
@@ -56,6 +65,7 @@ public class FeedbackService implements ServicesStruct<FeedbackModel> {
             return false;
         }
     }
+
 
     @Override
     public boolean delete(int id) {

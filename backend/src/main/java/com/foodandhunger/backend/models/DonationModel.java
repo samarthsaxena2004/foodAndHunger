@@ -18,6 +18,7 @@ public class DonationModel {
     private int id;
 
     private int donorId;             // Linked donor
+    @Column(unique = true)
     private String title;
     private String description;
     private String type;             // food / clothes / money / etc.

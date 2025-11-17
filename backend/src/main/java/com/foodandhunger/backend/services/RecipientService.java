@@ -59,13 +59,30 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
     @Override
     public boolean create(RecipientModel entity) {
         try {
+            if (recipientRepo.existsByEmail(entity.getEmail())) {
+                LLogging.warn("Duplicate recipient email");
+                return false;
+            }
+
+            if (entity.getPhone() != null && recipientRepo.existsByPhone(entity.getPhone())) {
+                LLogging.warn("Duplicate recipient phone");
+                return false;
+            }
+
+            if (entity.getAadhaar() != null && recipientRepo.existsByAadhaar(entity.getAadhaar())) {
+                LLogging.warn("Duplicate recipient Aadhaar");
+                return false;
+            }
+
             recipientRepo.save(entity);
             return true;
+
         } catch (Exception e) {
             LLogging.error("Create failed: " + e.getMessage());
             return false;
         }
     }
+
 
     @Override
     public boolean delete(int id) {

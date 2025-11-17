@@ -64,12 +64,25 @@ public class UserService {
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         User user = userOpt.get();
-        if (username != null && !username.isBlank()) user.setUsername(username);
-        if (email != null && !email.isBlank()) user.setEmail(email);
+
+        if (username != null && !username.isBlank()) {
+            if (userRepo.existsByUsername(username) && !user.getUsername().equals(username)) {
+                return ResponseEntity.status(400).build();
+            }
+            user.setUsername(username);
+        }
+
+        if (email != null && !email.isBlank()) {
+            if (userRepo.existsByEmail(email) && !user.getEmail().equals(email)) {
+                return ResponseEntity.status(400).build();
+            }
+            user.setEmail(email);
+        }
 
         userRepo.save(user);
         return ResponseEntity.ok(user);
     }
+
 
     //  Upload/change profile photo
     public ResponseEntity<User> updateProfilePhoto(int id, MultipartFile photo) {

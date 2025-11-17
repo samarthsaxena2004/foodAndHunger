@@ -23,7 +23,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                                 "/api/donor/**",
                                 "/api/request/**",
                                 "/api/recipient/**",
-                                "/api/feedback/**"
+                                "/api/feedback/**",
+                                "/api/volunteer/**"
                         ).permitAll()            //  allow all these
                         .anyRequest().permitAll() //  also allow everything else (for now)
                 )

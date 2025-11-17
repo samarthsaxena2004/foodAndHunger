@@ -53,8 +53,14 @@ public class RequestService implements ServicesStruct<RequestModel> {
     @Override
     public boolean create(RequestModel entity) {
         try {
+            if (requestRepo.existsByUserIdAndTitle(entity.getUserId(), entity.getTitle())) {
+                LLogging.warn("Duplicate request ignored");
+                return false;
+            }
+
             requestRepo.save(entity);
             return true;
+
         } catch (Exception e) {
             LLogging.error("create failed: " + e.getMessage());
             return false;

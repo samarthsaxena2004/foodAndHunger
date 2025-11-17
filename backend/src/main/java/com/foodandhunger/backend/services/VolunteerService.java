@@ -58,11 +58,24 @@ public class VolunteerService implements ServicesStruct<VolunteerModel> {
     @Override
     public boolean create(VolunteerModel entity) {
         try {
-            if(volunteerRepo.existsByEmail(entity.getEmail()))
-                throw new RuntimeException("Email already registered");
+            if (volunteerRepo.existsByEmail(entity.getEmail())) {
+                LLogging.warn("Duplicate volunteer email");
+                return false;
+            }
+
+            if (entity.getPhone() != null && volunteerRepo.existsByPhone(entity.getPhone())) {
+                LLogging.warn("Duplicate volunteer phone");
+                return false;
+            }
+
+            if (entity.getAadhaarCard() != null && volunteerRepo.existsByAadhaarCard(entity.getAadhaarCard())) {
+                LLogging.warn("Duplicate volunteer Aadhaar");
+                return false;
+            }
 
             volunteerRepo.save(entity);
             return true;
+
         } catch (Exception e) {
             LLogging.error("Create failed: " + e.getMessage());
             return false;

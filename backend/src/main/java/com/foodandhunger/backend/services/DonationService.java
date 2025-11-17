@@ -52,6 +52,15 @@ public class DonationService implements ServicesStruct<DonationModel> {
     @Override
     public boolean create(DonationModel entity) {
         try {
+            boolean exists = donationRepo.existsByTitleAndDonorId(
+                    entity.getTitle(), entity.getDonorId()
+            );
+
+            if (exists) {
+                LLogging.warn("Duplicate donation ignored");
+                return false;
+            }
+
             donationRepo.save(entity);
             return true;
         } catch (Exception e) {

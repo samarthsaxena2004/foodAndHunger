@@ -17,7 +17,7 @@ public class RequestModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    @Column(unique = true)
     private String title;
     private String description;
     private double amount;
@@ -26,7 +26,7 @@ public class RequestModel {
     private String type;         // e.g. veg, non-veg
     private String status = "pending"; // pending | approved | completed
     private String photo;        // optional image of requested item
-
+    @Column(unique = true)
     private int userId;          // who created this request
 
     @CreationTimestamp

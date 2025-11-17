@@ -57,8 +57,24 @@ public class DonorService implements ServicesStruct<DonorModel> {
     @Override
     public boolean create(DonorModel entity) {
         try {
+            if (donorRepo.existsByEmail(entity.getEmail())) {
+                LLogging.warn("Duplicate donor email");
+                return false;
+            }
+
+            if (entity.getPhone() != null && donorRepo.existsByPhone(entity.getPhone())) {
+                LLogging.warn("Duplicate donor phone");
+                return false;
+            }
+
+            if (entity.getAadhaar() != null && donorRepo.existsByAadhaar(entity.getAadhaar())) {
+                LLogging.warn("Duplicate donor Aadhaar");
+                return false;
+            }
+
             donorRepo.save(entity);
             return true;
+
         } catch (Exception e) {
             LLogging.error("create failed: " + e.getMessage());
             return false;

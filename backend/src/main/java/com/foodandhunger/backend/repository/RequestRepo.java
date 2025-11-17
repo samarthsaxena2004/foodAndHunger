@@ -9,4 +9,6 @@ public interface RequestRepo extends JpaRepository<RequestModel, Integer> {
     List<RequestModel> findByTitleContainingIgnoreCase(String title);
     List<RequestModel> findByUserId(int userId);
     List<RequestModel> findByStatusIgnoreCase(String status);
+    boolean existsByUserIdAndTitle(int userId, String title);
+
 }

@@ -16,7 +16,6 @@ public class FeedbackModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private int userId;            // who gave feedback
     private String message;
     private int star;              // 1 to 5

@@ -13,4 +13,7 @@ public interface FeedbackRepo extends JpaRepository<FeedbackModel, Integer> {
     // Custom query for average rating
     @Query("SELECT AVG(f.star) FROM FeedbackModel f")
     Double getAverageStar();
+
+    boolean existsByUserIdAndMessage(int userId, String message);
+
 }

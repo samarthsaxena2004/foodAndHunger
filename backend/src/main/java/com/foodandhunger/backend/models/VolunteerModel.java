@@ -15,12 +15,16 @@ public class VolunteerModel {
     private int id;
 
     private String name;
+    @Column(unique = true)
     private String email;
+    @Column(unique = true)
     private String phone;
     private String address;
     private String location;
 
+    @Column(unique = true)
     private String aadhaarCard;
+    @Column(unique = true)
     private String panCard;
 
     private String availability;   // e.g. "Mon-Fri, 2pm–6pm"

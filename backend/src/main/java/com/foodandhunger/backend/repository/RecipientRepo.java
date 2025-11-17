@@ -12,4 +12,8 @@ public interface RecipientRepo extends JpaRepository<RecipientModel, Integer> {
     List<RecipientModel> findByNameContainingIgnoreCase(String name);
     List<RecipientModel> findByOrganizationNameContainingIgnoreCase(String organizationName);
     List<RecipientModel> findByStatusIgnoreCase(String status);
+    boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
+    boolean existsByAadhaar(String aadhaar);
+
 }

@@ -9,4 +9,8 @@ public interface VolunteerRepo extends JpaRepository<VolunteerModel, Integer> {
     List<VolunteerModel> findByLocationContainingIgnoreCase(String location);
     List<VolunteerModel> findByNameContainingIgnoreCase(String name);
     boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
+    boolean existsByAadhaarCard(String aadhaarCard);
+
+
 }
