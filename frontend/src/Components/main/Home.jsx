@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+// /*  */import React, { useState, useEffect } from "react";
 import { ArrowRight, Users, Heart, HandHeart, TrendingUp, Award, Clock, Sparkles, Star, Zap } from "lucide-react";
 import DonorFoodListing from "../donor/DonorFoodListingForm";
 import DonorFoodList from "../donor/DonorFoodList";
 import RecipientListing from "../recipient/RecipientListing";
-import banner1 from "../../assets/images/banner1.png";
-import banner2 from "../../assets/images/banner2.png";
-import banner3 from "../../assets/images/banner3.png";
-import banner4 from "../../assets/images/banner4.png";
+import { useEffect, useState } from "react";
+
+
 const images = [
     banner1,
     banner2,
