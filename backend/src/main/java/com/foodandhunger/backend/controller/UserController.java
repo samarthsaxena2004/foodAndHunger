@@ -55,12 +55,14 @@ public class UserController {
     public ResponseEntity<User> updateUserInfo(
             @PathVariable int id,
             @RequestParam(required = false) String username,
-            @RequestParam(required = false) String email) {
-        return userService.updateUserInfo(id, username, email);
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude) {
+        return userService.updateUserInfo(id, username, email, latitude, longitude);
     }
 
     //  Upload or update profile photo
-    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
     public ResponseEntity<User> updateProfilePhoto(
             @PathVariable int id,
             @RequestParam("photo") MultipartFile photo) {

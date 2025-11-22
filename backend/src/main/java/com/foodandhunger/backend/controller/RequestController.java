@@ -17,11 +17,42 @@ public class RequestController implements ControllerStruct<RequestModel> {
     @Autowired
     private RequestService requestService;
 
-    @PostMapping("/add")
-    public ResponseEntity<String> create(@RequestBody RequestModel entity) {
-        return requestService.create(entity)
-                ? ResponseEntity.ok("Request added successfully")
-                : ResponseEntity.status(400).body("Failed to add request");
+    @PostMapping(value = "/add", consumes = { "multipart/form-data" })
+    public ResponseEntity<RequestModel> create(
+            @RequestParam("userId") int userId,
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("amount") double amount,
+            @RequestParam("location") String location,
+            @RequestParam(value = "latitude", required = false) Double latitude,
+            @RequestParam(value = "longitude", required = false) Double longitude,
+            @RequestParam("address") String address,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        try {
+            RequestModel request = new RequestModel();
+            request.setUserId(userId);
+            request.setTitle(title);
+            request.setDescription(description);
+            request.setAmount(amount);
+            request.setLocation(location);
+            request.setLatitude(latitude);
+            request.setLongitude(longitude);
+            request.setAddress(address);
+            request.setType(type);
+
+            if (!requestService.create(request)) {
+                return ResponseEntity.status(400).build();
+            }
+
+            if (photo != null) {
+                return requestService.uploadPhoto(request.getId(), photo);
+            }
+
+            return ResponseEntity.ok(request);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @GetMapping("/{id}")
@@ -83,9 +114,9 @@ public class RequestController implements ControllerStruct<RequestModel> {
     }
 
     //  New: Upload photo for request
-    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
     public ResponseEntity<RequestModel> uploadPhoto(@PathVariable int id,
-                                                    @RequestParam("photo") MultipartFile photo) {
+            @RequestParam("photo") MultipartFile photo) {
         return requestService.uploadPhoto(id, photo);
     }
 }

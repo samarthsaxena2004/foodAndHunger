@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="requests")
+@Table(name = "requests")
 @Getter
 @Setter
 public class RequestModel {
@@ -23,11 +23,13 @@ public class RequestModel {
     private double amount;
     private String location;
     private String address;
-    private String type;         // e.g. veg, non-veg
+    private Double latitude;
+    private Double longitude;
+    private String type; // e.g. veg, non-veg
     private String status = "pending"; // pending | approved | completed
-    private String photo;        // optional image of requested item
+    private String photo; // optional image of requested item
     @Column(unique = true)
-    private int userId;          // who created this request
+    private int userId; // who created this request
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -35,7 +37,9 @@ public class RequestModel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public RequestModel() {}
+    public RequestModel() {
+    }
+
     public RequestModel(String title, String address, String description, double amount, String location) {
         this.title = title;
         this.description = description;

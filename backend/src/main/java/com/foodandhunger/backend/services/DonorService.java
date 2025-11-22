@@ -83,7 +83,8 @@ public class DonorService implements ServicesStruct<DonorModel> {
 
     @Override
     public boolean delete(int id) {
-        if (!donorRepo.existsById(id)) return false;
+        if (!donorRepo.existsById(id))
+            return false;
         donorRepo.deleteById(id);
         return true;
     }
@@ -105,19 +106,21 @@ public class DonorService implements ServicesStruct<DonorModel> {
 
     //  Upload donor files
     public ResponseEntity<DonorModel> uploadFiles(int donorId,
-                                                  MultipartFile photo,
-                                                  MultipartFile certificate,
-                                                  MultipartFile signature) {
+            MultipartFile photo,
+            MultipartFile certificate,
+            MultipartFile signature) {
         try {
             DonorModel donor = donorRepo.findById(donorId)
                     .orElseThrow(() -> new RuntimeException("Donor not found"));
 
             if (photo != null)
-                donor.setPhoto(FileUploadUtil.saveUserFile("uploads/donors", donor.getUserId(), photo, "photo"));
+                donor.setPhoto(FileUploadUtil.saveUserFile("uploads/donors", donor.getId(), photo, "photo"));
             if (certificate != null)
-                donor.setOrganizationCertificate(FileUploadUtil.saveUserFile("uploads/donors", donor.getUserId(), certificate, "certificate"));
+                donor.setOrganizationCertificate(
+                        FileUploadUtil.saveUserFile("uploads/donors", donor.getId(), certificate, "certificate"));
             if (signature != null)
-                donor.setSignature(FileUploadUtil.saveUserFile("uploads/donors", donor.getUserId(), signature, "signature"));
+                donor.setSignature(
+                        FileUploadUtil.saveUserFile("uploads/donors", donor.getId(), signature, "signature"));
 
             donorRepo.save(donor);
             return ResponseEntity.ok(donor);

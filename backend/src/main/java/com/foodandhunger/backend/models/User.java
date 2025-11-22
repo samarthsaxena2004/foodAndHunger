@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @Getter
 @Setter
 public class User {
@@ -27,7 +27,9 @@ public class User {
     private String password;
 
     private String photo; // profile picture path
-    private String bio;   // optional user bio
+    private String bio; // optional user bio
+    private Double latitude;
+    private Double longitude;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -37,7 +39,9 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    public User() {}
+    public User() {
+    }
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;

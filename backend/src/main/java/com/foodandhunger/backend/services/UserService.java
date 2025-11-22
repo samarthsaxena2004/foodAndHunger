@@ -47,7 +47,8 @@ public class UserService {
     public ResponseEntity<String> changePassword(int id, String oldPass, String newPass) {
         LLogging.info("changePassword()");
         Optional<User> userOpt = userRepo.findById(id);
-        if (userOpt.isEmpty()) return ResponseEntity.status(404).body("User not found");
+        if (userOpt.isEmpty())
+            return ResponseEntity.status(404).body("User not found");
 
         User user = userOpt.get();
         if (!encoder.matches(oldPass, user.getPassword()))
@@ -58,10 +59,12 @@ public class UserService {
         return ResponseEntity.ok("Password updated successfully");
     }
 
-    //  Update username or email
-    public ResponseEntity<User> updateUserInfo(int id, String username, String email) {
+    //  Update username or email or location
+    public ResponseEntity<User> updateUserInfo(int id, String username, String email, Double latitude,
+            Double longitude) {
         Optional<User> userOpt = userRepo.findById(id);
-        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        if (userOpt.isEmpty())
+            return ResponseEntity.notFound().build();
 
         User user = userOpt.get();
 
@@ -79,10 +82,14 @@ public class UserService {
             user.setEmail(email);
         }
 
+        if (latitude != null)
+            user.setLatitude(latitude);
+        if (longitude != null)
+            user.setLongitude(longitude);
+
         userRepo.save(user);
         return ResponseEntity.ok(user);
     }
-
 
     //  Upload/change profile photo
     public ResponseEntity<User> updateProfilePhoto(int id, MultipartFile photo) {
@@ -100,7 +107,8 @@ public class UserService {
 
     //  Delete user
     public ResponseEntity<String> deleteUser(int id) {
-        if (!userRepo.existsById(id)) return ResponseEntity.status(404).body("User not found");
+        if (!userRepo.existsById(id))
+            return ResponseEntity.status(404).body("User not found");
         userRepo.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
