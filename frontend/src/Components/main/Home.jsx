@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+// /*  */import React, { useState, useEffect } from "react";
 import { ArrowRight, Users, Heart, HandHeart, TrendingUp, Award, Clock, Sparkles, Star, Zap } from "lucide-react";
 import DonorFoodListing from "../donor/DonorFoodListingForm";
 import DonorFoodList from "../donor/DonorFoodList";
 import RecipientListing from "../recipient/RecipientListing";
+import { useEffect, useState } from "react";
 
-import ListDonations from "../donation/ListDonations";
-import GoogleMapViewer from "../utils/LiveLocation";
-import DonorForm from "../donor/Register";
-import HomePageCrousel from "../utils/HomePageCrousel";
-import HomePageStates from "../utils/HomePageStates";
 
+const images = [
+    banner1,
+    banner2,
+    banner3,
+    banner4,
+];
 
 const Home = () => {
     const [index, setIndex] = useState(0);
