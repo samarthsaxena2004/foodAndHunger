@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 
 
 const images = [
-    "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1200&q=80",
-    "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&q=80",
-    "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1200&q=80",
-    "https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=1200&q=80"
+    banner1,
+    banner2,
+    banner3,
+    banner4,
 ];
 
 const Home = () => {
@@ -88,11 +88,11 @@ const Home = () => {
     return (
         <div className="w-full overflow-hidden">
             {/* Hero Carousel */}
-            <div className="relative w-full h-[70vh] overflow-hidden">
+            <div className="relative w-full h-[100vh] overflow-hidden">
                 {images.map((img, i) => (
                     <div
                         key={i}
-                        className={`absolute inset-0 transition-all duration-1000 ${i === index ? "opacity-100 scale-100" : "opacity-0 scale-110"
+                        className={`absolute inset-0 transition-all duration-1000 ${i === index ? " scale-100" : "opacity-0 scale-110"
                             }`}
                     >
                         <img
@@ -112,16 +112,6 @@ const Home = () => {
                 {/* Content with advanced animations */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
                     <div className="space-y-6 max-w-4xl relative">
-                        {/* Floating particles */}
-                        <div className="absolute -top-10 left-0 animate-float">
-                            <Sparkles className="w-8 h-8 text-green-400 opacity-70" />
-                        </div>
-                        <div className="absolute -top-5 right-10 animate-float-delayed">
-                            <Star className="w-6 h-6 text-yellow-400 opacity-70" />
-                        </div>
-                        <div className="absolute top-20 -right-5 animate-float-slower">
-                            <Zap className="w-7 h-7 text-blue-400 opacity-70" />
-                        </div>
                         <h1 className="text-4xl md:text-6xl font-bold mb-2 leading-tight animate-slide-down">
                             Welcome to{" "}
                             <span className="inline-block bg-gradient-to-r from-green-400 via-emerald-500 to-green-400 bg-clip-text text-transparent animate-gradient bg-300">
@@ -129,10 +119,12 @@ const Home = () => {
                             </span>
                         </h1>
                         <p className="text-xl md:text-2xl mb-6 font-light animate-slide-up opacity-0" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                            Let's save a life together, one meal at a time
+
+                            FoodAndHunger connects restaurants, shops, and households with nearby NGOs to donate surplus food using a smart, location-based platform.
+                            It reduces food waste while ensuring fresh meals reach people in need quickly and safely.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up opacity-0" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-                            <button className="relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group">
+                            <button className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group">
                                 <div className="absolute inset-0 bg-green-600 transition-transform duration-300 group-hover:scale-110"></div>
                                 <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 <span className="relative flex items-center gap-2">
@@ -141,10 +133,10 @@ const Home = () => {
                                 </span>
                                 <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
                             </button>
-                            <button className="relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group border-2 border-white/30 backdrop-blur-sm">
+                            <button className="cursor-pointer relative overflow-hidden px-8 py-3 rounded-xl font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 group border-2 border-white/30 backdrop-blur-sm">
                                 <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-all duration-300"></div>
                                 <span className="relative flex items-center gap-2">
-                                    Find Recipients
+                                    Become a Recipiet
                                 </span>
                             </button>
                         </div>
