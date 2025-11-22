@@ -1,91 +1,6 @@
-import React, { useState } from "react";
-import { Send, Utensils, Clock, AlertTriangle, Package, ChevronDown, CheckCircle, XCircle, MapPin, Phone } from "lucide-react";
-
-// Mock data for donor listings and associated recipient requests
-const mockDonorListings = [
-    {
-        id: 101,
-        foodType: "Cooked Chicken & Rice",
-        quantity: "10 kg (approx. 40 servings)",
-        readyTime: "Ready for pickup by 4 PM today",
-        status: "Pending Match",
-        requests: [
-            { id: 501, recipient: "The Ark Orphanage", urgency: "High", timeRequested: "2 hours ago", contact: "Jane Doe (123-456-7890)", pickupPreference: "Immediate Pickup" },
-            { id: 502, recipient: "Sunset Old Age Home", urgency: "Medium", timeRequested: "30 mins ago", contact: "John Smith (987-654-3210)", pickupPreference: "Evening Delivery" },
-        ]
-    },
-    {
-        id: 102,
-        foodType: "15 kg Fresh Produce",
-        quantity: "15 kg",
-        readyTime: "Tomorrow Morning",
-        status: "Match Confirmed",
-        requests: [
-            { id: 503, recipient: "Community Youth Center", urgency: "Low", timeRequested: "1 day ago", contact: "Alice Brown (555-123-4567)", pickupPreference: "Morning Pickup" },
-        ]
-    },
-    {
-        id: 103,
-        foodType: "2 Boxes Canned Soup",
-        quantity: "50 cans",
-        readyTime: "Anytime",
-        status: "No Requests Yet",
-        requests: []
-    }
-];
+import React from 'react'
 
 const DonorFoodList = () => {
-    const [listings, setListings] = useState(mockDonorListings);
-    const [expandedListing, setExpandedListing] = useState(null); // ID of the currently expanded card
-
-    const toggleExpansion = (id) => {
-        setExpandedListing(expandedListing === id ? null : id);
-    };
-
-    const handleApprove = (listingId, requestId) => {
-        // In a real application, this would trigger an API call to confirm the match.
-        console.log(`Approving Request ${requestId} for Listing ${listingId}`);
-        // Logic to update state to 'Match Confirmed' for the listing and hide others
-        alert(`Match approved! Contact details for the recipient have been shared via email/SMS.`);
-    };
-
-    const handleReject = (listingId, requestId) => {
-        // In a real application, this would remove the request from the list.
-        console.log(`Rejecting Request ${requestId} for Listing ${listingId}`);
-        const updatedListings = listings.map(listing => {
-            if (listing.id === listingId) {
-                return {
-                    ...listing,
-                    requests: listing.requests.filter(req => req.id !== requestId)
-                };
-            }
-            return listing;
-        });
-        setListings(updatedListings);
-    };
-
-    const getStatusClass = (status) => {
-        switch (status) {
-            case 'Match Confirmed':
-                return 'text-green-600 bg-green-500/20';
-            case 'Pending Match':
-                return 'text-yellow-600 bg-yellow-500/20';
-            default:
-                return 'text-gray-500 bg-gray-300/20';
-        }
-    };
-
-    const getUrgencyClass = (urgency) => {
-        switch (urgency) {
-            case 'High':
-                return 'text-red-600 font-semibold';
-            case 'Immediate Pickup':
-                return 'text-red-600 font-semibold';
-            default:
-                return 'text-emerald-600';
-        }
-    };
-
     return (
         <div className="w-full overflow-hidden">
             {/* --- Hero Section --- */}
@@ -235,4 +150,4 @@ const DonorFoodList = () => {
     );
 };
 
-export default DonorFoodList;
+export default DonorFoodList
