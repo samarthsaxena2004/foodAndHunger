@@ -2,13 +2,12 @@ package com.foodandhunger.backend.services;
 
 import com.foodandhunger.backend.models.User;
 import com.foodandhunger.backend.repository.UserRepo;
-import com.foodandhunger.backend.utils.FileUploadUtil;
+
 import com.foodandhunger.backend.utils.LLogging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,9 +58,8 @@ public class UserService {
         return ResponseEntity.ok("Password updated successfully");
     }
 
-    //  Update username or email or location
-    public ResponseEntity<User> updateUserInfo(int id, String username, String email, Double latitude,
-            Double longitude) {
+    //  Update username or email
+    public ResponseEntity<User> updateUserInfo(int id, String username, String email) {
         Optional<User> userOpt = userRepo.findById(id);
         if (userOpt.isEmpty())
             return ResponseEntity.notFound().build();
@@ -82,27 +80,8 @@ public class UserService {
             user.setEmail(email);
         }
 
-        if (latitude != null)
-            user.setLatitude(latitude);
-        if (longitude != null)
-            user.setLongitude(longitude);
-
         userRepo.save(user);
         return ResponseEntity.ok(user);
-    }
-
-    //  Upload/change profile photo
-    public ResponseEntity<User> updateProfilePhoto(int id, MultipartFile photo) {
-        try {
-            User user = userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-            String photoPath = FileUploadUtil.saveUserFile("uploads/profile", id, photo, "profile");
-            user.setPhoto(photoPath);
-            userRepo.save(user);
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            LLogging.error("Error updating photo: " + e.getMessage());
-            return ResponseEntity.status(500).build();
-        }
     }
 
     //  Delete user

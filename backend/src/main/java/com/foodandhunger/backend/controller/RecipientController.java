@@ -16,48 +16,11 @@ public class RecipientController implements ControllerStruct<RecipientModel> {
     @Autowired
     private RecipientService recipientService;
 
-    @PostMapping(value = "/add", consumes = { "multipart/form-data" })
-    public ResponseEntity<RecipientModel> create(
-            @RequestParam("userId") int userId,
-            @RequestParam("name") String name,
-            @RequestParam("age") int age,
-            @RequestParam("address") String address,
-            @RequestParam("organizationName") String organizationName,
-            @RequestParam("pan") String pan,
-            @RequestParam("aadhaar") String aadhaar,
-            @RequestParam("phone") String phone,
-            @RequestParam("email") String email,
-            @RequestParam("location") String location,
-            @RequestParam(value = "latitude", required = false) Double latitude,
-            @RequestParam(value = "longitude", required = false) Double longitude,
-            @RequestParam(value = "photo", required = false) MultipartFile photo,
-            @RequestParam(value = "certificate", required = false) MultipartFile certificate,
-            @RequestParam(value = "signature", required = false) MultipartFile signature) {
-        try {
-            RecipientModel recipient = new RecipientModel();
-            recipient.setUserId(userId);
-            recipient.setName(name);
-            recipient.setAge(age);
-            recipient.setAddress(address);
-            recipient.setOrganizationName(organizationName);
-            recipient.setPan(pan);
-            recipient.setAadhaar(aadhaar);
-            recipient.setPhone(phone);
-            recipient.setEmail(email);
-            recipient.setEmail(email);
-            recipient.setLocation(location);
-            recipient.setLatitude(latitude);
-            recipient.setLongitude(longitude);
-            recipient.setStatus("pending");
-
-            if (!recipientService.create(recipient)) {
-                return ResponseEntity.status(400).build();
-            }
-
-            return recipientService.uploadFiles(recipient.getId(), photo, certificate, signature);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
+    @PostMapping("/add")
+    public ResponseEntity<String> create(@RequestBody RecipientModel entity) {
+        return recipientService.create(entity)
+                ? ResponseEntity.ok("Recipient added successfully")
+                : ResponseEntity.status(400).body("Failed to add recipient");
     }
 
     @GetMapping("/{id}")
@@ -101,7 +64,7 @@ public class RecipientController implements ControllerStruct<RecipientModel> {
     }
 
     //  Upload photo, certificate, signature
-    @PostMapping(value = "/{id}/upload", consumes = { "multipart/form-data" })
+    @PostMapping(value = "/{id}/upload", consumes = {"multipart/form-data"})
     public ResponseEntity<RecipientModel> uploadFiles(
             @PathVariable int id,
             @RequestParam(required = false) MultipartFile photo,

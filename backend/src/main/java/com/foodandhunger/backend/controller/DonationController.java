@@ -3,7 +3,6 @@ package com.foodandhunger.backend.controller;
 import com.foodandhunger.backend.models.DonationModel;
 import com.foodandhunger.backend.services.DonationService;
 import com.foodandhunger.backend.structures.ControllerStruct;
-import com.foodandhunger.backend.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ public class DonationController implements ControllerStruct<DonationModel> {
     private DonationService donationService;
 
     //  Create donation with photo
-    @PostMapping(value = "/add", consumes = { "multipart/form-data" })
+    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
     public ResponseEntity<String> createWithFile(
             @RequestParam("donorId") int donorId,
             @RequestParam("title") String title,
@@ -27,9 +26,8 @@ public class DonationController implements ControllerStruct<DonationModel> {
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "photo", required = false) MultipartFile photo,
             @RequestParam(value = "location", required = false) String location,
-            @RequestParam(value = "address", required = false) String address,
-            @RequestParam(value = "latitude", required = false) Double latitude,
-            @RequestParam(value = "longitude", required = false) Double longitude) {
+            @RequestParam(value = "address", required = false) String address
+    ) {
         try {
             DonationModel donation = new DonationModel();
             donation.setDonorId(donorId);
@@ -38,13 +36,9 @@ public class DonationController implements ControllerStruct<DonationModel> {
             donation.setType(type);
             donation.setLocation(location);
             donation.setAddress(address);
-            donation.setLatitude(latitude);
-            donation.setLongitude(longitude);
 
-            if (photo != null) {
-                String path = FileUploadUtil.saveUserFile("uploads/donations", donorId, photo, title);
-                donation.setPhoto(path);
-            }
+            if (photo != null)
+                donation.setPhoto(photo.getOriginalFilename());
 
             boolean created = donationService.create(donation);
             return created ? ResponseEntity.ok("Donation added successfully")
@@ -95,7 +89,7 @@ public class DonationController implements ControllerStruct<DonationModel> {
     }
 
     //  Upload photo separately
-    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
+    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
     public ResponseEntity<DonationModel> uploadPhoto(@PathVariable int id, @RequestParam MultipartFile photo) {
         return donationService.uploadPhoto(id, photo);
     }

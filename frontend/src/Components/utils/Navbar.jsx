@@ -1,30 +1,12 @@
 
 import React, { useState, useEffect } from "react";
-import { SunIcon, MoonIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
-    const getInitialTheme = () => {
-        if (typeof window !== "undefined") {
-            const stored = sessionStorage.getItem("theme");
-            if (stored) return stored;
-        }
-        return window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
-    };
-
-    const [theme, setTheme] = useState(getInitialTheme);
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [activeLink, setActiveLink] = useState("/");
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (theme === "dark") root.classList.add("dark");
-        else root.classList.remove("dark");
-        sessionStorage.setItem("theme", theme);
-    }, [theme]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -34,8 +16,6 @@ const Navbar = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
-
     const handleLinkClick = (path) => {
         setActiveLink(path);
         setMenuOpen(false);
@@ -44,11 +24,8 @@ const Navbar = () => {
     const navItems = ["Donors", "Recipients", "Volunteers"];
 
     return (
-        <nav className={`sticky top-0 z-50 transition-all duration-500 navbar ${scrolled ? "shadow-2xl py-2" : "shadow-md py-3"
-            }`} style={{
-                backgroundColor: "var(--color-bg-light)",
-                color: "var(--color-text-light)",
-            }}
+        <nav className={`sticky top-0 z-50 transition-all duration-500 navbar bg-white text-gray-800 ${scrolled ? "shadow-2xl py-2" : "shadow-md py-3"
+            }`}
         >
             <div className="flex items-center justify-between px-6 md:px-14 relative">
                 {/* Animated underline decoration */}
@@ -123,21 +100,6 @@ const Navbar = () => {
 
                 {/* Right Section */}
                 <div className="flex items-center gap-4">
-                    <button
-                        aria-label="Toggle Theme"
-                        onClick={toggleTheme}
-                        className="relative rounded-full p-2 transition-all duration-300 group overflow-hidden hover:scale-110"
-                    >
-                        {/* Animated background circle */}
-                        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-blue-900 dark:to-purple-900 opacity-0 group-hover:opacity-30 scale-0 group-hover:scale-150 transition-all duration-500"></span>
-
-                        {theme === "dark" ? (
-                            <SunIcon className="w-6 h-6 text-yellow-400 relative z-10 transform group-hover:rotate-90 transition-transform duration-500" />
-                        ) : (
-                            <MoonIcon className="w-6 h-6 relative z-10 transform group-hover:-rotate-12 group-hover:scale-110 transition-transform duration-300" />
-                        )}
-                    </button>
-
                     {/* Mobile Menu Button */}
                     <button
                         className="md:hidden p-2 rounded-lg relative group transition-all duration-300 hover:scale-110"

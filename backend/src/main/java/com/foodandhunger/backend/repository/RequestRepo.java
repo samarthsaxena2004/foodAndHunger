@@ -6,9 +6,13 @@ import java.util.List;
 
 public interface RequestRepo extends JpaRepository<RequestModel, Integer> {
     List<RequestModel> findByLocationContainingIgnoreCase(String location);
+
     List<RequestModel> findByTitleContainingIgnoreCase(String title);
-    List<RequestModel> findByUserId(int userId);
+
+    List<RequestModel> findByRecipientId(int recipientId);
+
     List<RequestModel> findByStatusIgnoreCase(String status);
-    boolean existsByUserIdAndTitle(int userId, String title);
+
+    boolean existsByRecipientIdAndTitle(int recipientId, String title);
 
 }

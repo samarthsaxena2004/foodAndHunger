@@ -16,54 +16,35 @@ public class DonorController implements ControllerStruct<DonorModel> {
     @Autowired
     private DonorService donorService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/add", consumes = { "multipart/form-data" })
-    public ResponseEntity<DonorModel> createDonor(
-            @RequestParam("name") String name,
-            @RequestParam("age") int age,
-            @RequestParam("address") String address,
-            @RequestParam("organizationName") String organizationName,
-            @RequestParam("pan") String pan,
-            @RequestParam("aadhaar") String aadhaar,
-            @RequestParam("phone") String phone,
-            @RequestParam("email") String email,
-            @RequestParam("location") String location,
-            @RequestParam(value = "latitude", required = false) Double latitude,
-            @RequestParam(value = "longitude", required = false) Double longitude,
-            @RequestParam("organizationCertificate") MultipartFile organizationCertificate,
-            @RequestParam("photo") MultipartFile photo,
-            @RequestParam("signature") MultipartFile signature) {
-        try {
-            DonorModel donor = new DonorModel();
-            donor.setName(name);
-            donor.setAge(age);
-            donor.setAddress(address);
-            donor.setOrganizationName(organizationName);
-            donor.setPan(pan);
-            donor.setAadhaar(aadhaar);
-            donor.setPhone(phone);
-            donor.setEmail(email);
-            donor.setLocation(location);
-            donor.setLatitude(latitude);
-            donor.setLongitude(longitude);
-            donor.setStatus("pending");
+    public ResponseEntity<String> create(
+            @ModelAttribute DonorModel entity,
+            @RequestParam(value = "photo", required = false) MultipartFile photo,
+            @RequestParam(value = "organizationCertificate", required = false) MultipartFile organizationCertificate,
+            @RequestParam(value = "certificate", required = false) MultipartFile certificate,
+            @RequestParam(value = "signature", required = false) MultipartFile signature) {
 
-            if (!donorService.create(donor)) {
-                return ResponseEntity.status(400).body(null); // Or appropriate error message
-            }
-
-            // Upload files and return the updated donor from the service
-            return donorService.uploadFiles(donor.getId(), photo, organizationCertificate, signature);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+        if (!donorService.isUserPresent(entity.getUserId())) {
+            return ResponseEntity.status(400).body("User not present");
         }
+
+        // Handle certificate alias (user might send 'certificate' or 'organizationCertificate')
+        MultipartFile certFile = (organizationCertificate != null) ? organizationCertificate : certificate;
+
+        return donorService.create(entity, photo, certFile, signature)
+                ? ResponseEntity.ok("Donor added successfully")
+                : ResponseEntity.status(400).body("Failed to add donor");
     }
 
-    //    public ResponseEntity<String> create(@RequestBody DonorModel entity) {
-    //        return donorService.create(entity)
-    //                ? ResponseEntity.ok("Donor added successfully")
-    //                : ResponseEntity.status(400).body("Failed to add donor");
-    //    }
+    @PostMapping(value = "/add", consumes = "application/json")
+    public ResponseEntity<String> createJson(@RequestBody DonorModel entity) {
+        if (!donorService.isUserPresent(entity.getUserId())) {
+            return ResponseEntity.status(400).body("User not present");
+        }
+        return donorService.create(entity)
+                ? ResponseEntity.ok("Donor added successfully")
+                : ResponseEntity.status(400).body("Failed to add donor");
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<DonorModel> get(@PathVariable int id) {
@@ -113,14 +94,6 @@ public class DonorController implements ControllerStruct<DonorModel> {
             @RequestParam(required = false) MultipartFile certificate,
             @RequestParam(required = false) MultipartFile signature) {
         return donorService.uploadFiles(id, photo, certificate, signature);
-    }
-
-    //  Update profile photo specifically
-    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
-    public ResponseEntity<DonorModel> updateProfilePhoto(
-            @PathVariable int id,
-            @RequestParam("photo") MultipartFile photo) {
-        return donorService.uploadFiles(id, photo, null, null);
     }
 
     //  Get by user ID

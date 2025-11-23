@@ -17,42 +17,12 @@ public class RequestController implements ControllerStruct<RequestModel> {
     @Autowired
     private RequestService requestService;
 
-    @PostMapping(value = "/add", consumes = { "multipart/form-data" })
-    public ResponseEntity<RequestModel> create(
-            @RequestParam("userId") int userId,
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("amount") double amount,
-            @RequestParam("location") String location,
-            @RequestParam(value = "latitude", required = false) Double latitude,
-            @RequestParam(value = "longitude", required = false) Double longitude,
-            @RequestParam("address") String address,
-            @RequestParam(value = "type", required = false) String type,
-            @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        try {
-            RequestModel request = new RequestModel();
-            request.setUserId(userId);
-            request.setTitle(title);
-            request.setDescription(description);
-            request.setAmount(amount);
-            request.setLocation(location);
-            request.setLatitude(latitude);
-            request.setLongitude(longitude);
-            request.setAddress(address);
-            request.setType(type);
-
-            if (!requestService.create(request)) {
-                return ResponseEntity.status(400).build();
-            }
-
-            if (photo != null) {
-                return requestService.uploadPhoto(request.getId(), photo);
-            }
-
-            return ResponseEntity.ok(request);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+    @PostMapping("/add")
+    public ResponseEntity<String> create(@RequestBody RequestModel entity) {
+        if (!requestService.create(entity)) {
+            return ResponseEntity.status(400).body("Failed to add request (Recipient not found or duplicate)");
         }
+        return ResponseEntity.ok("Request added successfully");
     }
 
     @GetMapping("/{id}")
@@ -95,10 +65,10 @@ public class RequestController implements ControllerStruct<RequestModel> {
         return requestService.exists(id);
     }
 
-    //  New: Requests by user
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RequestModel>> getByUser(@PathVariable int userId) {
-        return requestService.getByUser(userId);
+    //  New: Requests by recipient
+    @GetMapping("/recipient/{recipientId}")
+    public ResponseEntity<List<RequestModel>> getByRecipient(@PathVariable int recipientId) {
+        return requestService.getByRecipient(recipientId);
     }
 
     //  New: Requests by location

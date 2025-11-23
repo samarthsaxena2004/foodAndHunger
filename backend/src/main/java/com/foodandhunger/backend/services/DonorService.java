@@ -2,6 +2,7 @@ package com.foodandhunger.backend.services;
 
 import com.foodandhunger.backend.models.DonorModel;
 import com.foodandhunger.backend.repository.DonorRepo;
+import com.foodandhunger.backend.repository.UserRepo;
 import com.foodandhunger.backend.structures.ServicesStruct;
 import com.foodandhunger.backend.utils.FileUploadUtil;
 import com.foodandhunger.backend.utils.LLogging;
@@ -18,6 +19,9 @@ public class DonorService implements ServicesStruct<DonorModel> {
 
     @Autowired
     private DonorRepo donorRepo;
+
+    @Autowired
+    private UserRepo userRepo;
 
     @Override
     public Optional<DonorModel> getById(int id) {
@@ -54,8 +58,7 @@ public class DonorService implements ServicesStruct<DonorModel> {
         }
     }
 
-    @Override
-    public boolean create(DonorModel entity) {
+    public boolean create(DonorModel entity, MultipartFile photo, MultipartFile certificate, MultipartFile signature) {
         try {
             if (donorRepo.existsByEmail(entity.getEmail())) {
                 LLogging.warn("Duplicate donor email");
@@ -72,6 +75,18 @@ public class DonorService implements ServicesStruct<DonorModel> {
                 return false;
             }
 
+            // Save first to get ID (though we use userId for folder)
+            // But we need to save paths to the entity
+
+            if (photo != null)
+                entity.setPhoto(FileUploadUtil.saveUserFile("uploads/donors", entity.getUserId(), photo, "photo"));
+            if (certificate != null)
+                entity.setOrganizationCertificate(
+                        FileUploadUtil.saveUserFile("uploads/donors", entity.getUserId(), certificate, "certificate"));
+            if (signature != null)
+                entity.setSignature(
+                        FileUploadUtil.saveUserFile("uploads/donors", entity.getUserId(), signature, "signature"));
+
             donorRepo.save(entity);
             return true;
 
@@ -79,6 +94,11 @@ public class DonorService implements ServicesStruct<DonorModel> {
             LLogging.error("create failed: " + e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public boolean create(DonorModel entity) {
+        return create(entity, null, null, null);
     }
 
     @Override
@@ -114,13 +134,13 @@ public class DonorService implements ServicesStruct<DonorModel> {
                     .orElseThrow(() -> new RuntimeException("Donor not found"));
 
             if (photo != null)
-                donor.setPhoto(FileUploadUtil.saveUserFile("uploads/donors", donor.getId(), photo, "photo"));
+                donor.setPhoto(FileUploadUtil.saveUserFile("uploads/donors", donor.getUserId(), photo, "photo"));
             if (certificate != null)
                 donor.setOrganizationCertificate(
-                        FileUploadUtil.saveUserFile("uploads/donors", donor.getId(), certificate, "certificate"));
+                        FileUploadUtil.saveUserFile("uploads/donors", donor.getUserId(), certificate, "certificate"));
             if (signature != null)
                 donor.setSignature(
-                        FileUploadUtil.saveUserFile("uploads/donors", donor.getId(), signature, "signature"));
+                        FileUploadUtil.saveUserFile("uploads/donors", donor.getUserId(), signature, "signature"));
 
             donorRepo.save(donor);
             return ResponseEntity.ok(donor);
@@ -165,5 +185,9 @@ public class DonorService implements ServicesStruct<DonorModel> {
     public ResponseEntity<Long> countVerified() {
         long count = donorRepo.findByStatusIgnoreCase("verified").size();
         return ResponseEntity.ok(count);
+    }
+
+    public boolean isUserPresent(int userId) {
+        return userRepo.existsById(userId);
     }
 }

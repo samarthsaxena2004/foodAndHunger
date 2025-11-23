@@ -1,11 +1,11 @@
 import React from 'react'
-// import { useOutletContext } from 'react-router'
+import { useOutletContext } from 'react-router-dom'
 import Home from '../../Components/main/Home';
-import { Outlet } from "react-router-dom";
 
 const HomePage = () => {
+    const context = useOutletContext();
     return (
-        <Home />
+        <Home {...context} />
     )
 }
 

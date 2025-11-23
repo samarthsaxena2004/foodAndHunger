@@ -6,7 +6,6 @@ import com.foodandhunger.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -55,18 +54,8 @@ public class UserController {
     public ResponseEntity<User> updateUserInfo(
             @PathVariable int id,
             @RequestParam(required = false) String username,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) Double latitude,
-            @RequestParam(required = false) Double longitude) {
-        return userService.updateUserInfo(id, username, email, latitude, longitude);
-    }
-
-    //  Upload or update profile photo
-    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
-    public ResponseEntity<User> updateProfilePhoto(
-            @PathVariable int id,
-            @RequestParam("photo") MultipartFile photo) {
-        return userService.updateProfilePhoto(id, photo);
+            @RequestParam(required = false) String email) {
+        return userService.updateUserInfo(id, username, email);
     }
 
     //  Delete user account

@@ -26,11 +26,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String photo; // profile picture path
-    private String bio; // optional user bio
-    private Double latitude;
-    private Double longitude;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

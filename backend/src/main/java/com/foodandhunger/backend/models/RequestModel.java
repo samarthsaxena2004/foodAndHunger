@@ -23,13 +23,11 @@ public class RequestModel {
     private double amount;
     private String location;
     private String address;
-    private Double latitude;
-    private Double longitude;
     private String type; // e.g. veg, non-veg
     private String status = "pending"; // pending | approved | completed
     private String photo; // optional image of requested item
     @Column(unique = true)
-    private int userId; // who created this request
+    private int recipientId; // who created this request
 
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -1,6 +1,7 @@
 package com.foodandhunger.backend.services;
 
 import com.foodandhunger.backend.models.RequestModel;
+import com.foodandhunger.backend.repository.RecipientRepo;
 import com.foodandhunger.backend.repository.RequestRepo;
 import com.foodandhunger.backend.structures.ServicesStruct;
 import com.foodandhunger.backend.utils.FileUploadUtil;
@@ -18,6 +19,9 @@ public class RequestService implements ServicesStruct<RequestModel> {
 
     @Autowired
     private RequestRepo requestRepo;
+
+    @Autowired
+    private RecipientRepo recipientRepo;
 
     @Override
     public Optional<RequestModel> getById(int id) {
@@ -53,7 +57,12 @@ public class RequestService implements ServicesStruct<RequestModel> {
     @Override
     public boolean create(RequestModel entity) {
         try {
-            if (requestRepo.existsByUserIdAndTitle(entity.getUserId(), entity.getTitle())) {
+            if (!recipientRepo.existsById(entity.getRecipientId())) {
+                LLogging.warn("Recipient not found");
+                return false;
+            }
+
+            if (requestRepo.existsByRecipientIdAndTitle(entity.getRecipientId(), entity.getTitle())) {
                 LLogging.warn("Duplicate request ignored");
                 return false;
             }
@@ -69,7 +78,8 @@ public class RequestService implements ServicesStruct<RequestModel> {
 
     @Override
     public boolean delete(int id) {
-        if (!requestRepo.existsById(id)) return false;
+        if (!requestRepo.existsById(id))
+            return false;
         requestRepo.deleteById(id);
         return true;
     }
@@ -89,9 +99,9 @@ public class RequestService implements ServicesStruct<RequestModel> {
         return ResponseEntity.ok(requestRepo.existsById(id));
     }
 
-    //  New: Filter by user
-    public ResponseEntity<List<RequestModel>> getByUser(int userId) {
-        return ResponseEntity.ok(requestRepo.findByUserId(userId));
+    //  New: Filter by recipient
+    public ResponseEntity<List<RequestModel>> getByRecipient(int recipientId) {
+        return ResponseEntity.ok(requestRepo.findByRecipientId(recipientId));
     }
 
     //  New: Filter by location
@@ -109,7 +119,8 @@ public class RequestService implements ServicesStruct<RequestModel> {
         try {
             RequestModel req = requestRepo.findById(requestId)
                     .orElseThrow(() -> new RuntimeException("Request not found"));
-            String photoPath = FileUploadUtil.saveUserFile("uploads/requests", req.getUserId(), photo, req.getTitle());
+            String photoPath = FileUploadUtil.saveUserFile("uploads/requests", req.getRecipientId(), photo,
+                    req.getTitle());
             req.setPhoto(photoPath);
             requestRepo.save(req);
             return ResponseEntity.ok(req);

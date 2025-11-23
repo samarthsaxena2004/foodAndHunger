@@ -17,39 +17,11 @@ public class VolunteerController implements ControllerStruct<VolunteerModel> {
     @Autowired
     private VolunteerService volunteerService;
 
-    @PostMapping(value = "/add", consumes = { "multipart/form-data" })
-    public ResponseEntity<VolunteerModel> create(
-            @RequestParam("name") String name,
-            @RequestParam("email") String email,
-            @RequestParam("phone") String phone,
-            @RequestParam("address") String address,
-            @RequestParam("location") String location,
-            @RequestParam(value = "latitude", required = false) Double latitude,
-            @RequestParam(value = "longitude", required = false) Double longitude,
-            @RequestParam("aadhaarCard") String aadhaarCard,
-            @RequestParam("panCard") String panCard,
-            @RequestParam("availability") String availability,
-            @RequestParam("skills") String skills,
-            @RequestParam("reason") String reason,
-            @RequestParam("emergencyContactPhone") String emergencyContactPhone,
-            @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        try {
-            VolunteerModel volunteer = new VolunteerModel(name, email, phone, address, location, latitude, longitude,
-                    aadhaarCard, panCard,
-                    availability, skills, reason, emergencyContactPhone);
-
-            if (!volunteerService.create(volunteer)) {
-                return ResponseEntity.status(400).build();
-            }
-
-            if (photo != null) {
-                return volunteerService.uploadProfilePhoto(volunteer.getId(), photo);
-            }
-
-            return ResponseEntity.ok(volunteer);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
+    @PostMapping("/add")
+    public ResponseEntity<String> create(@RequestBody VolunteerModel entity) {
+        return volunteerService.create(entity)
+                ? ResponseEntity.ok("Volunteer added successfully")
+                : ResponseEntity.status(400).body("Failed to add volunteer");
     }
 
     @Override
@@ -69,7 +41,7 @@ public class VolunteerController implements ControllerStruct<VolunteerModel> {
     @Override
     @PutMapping("/update/{id}")
     public ResponseEntity<VolunteerModel> update(@PathVariable int id,
-            @RequestBody VolunteerModel entity) {
+                                                 @RequestBody VolunteerModel entity) {
         boolean updated = volunteerService.updateById(id, entity);
         return updated ? ResponseEntity.ok(entity)
                 : ResponseEntity.status(404).build();
@@ -108,9 +80,9 @@ public class VolunteerController implements ControllerStruct<VolunteerModel> {
     }
 
     // Upload volunteer profile photo
-    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
+    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
     public ResponseEntity<VolunteerModel> uploadPhoto(@PathVariable int id,
-            @RequestParam("photo") MultipartFile file) {
+                                                      @RequestParam("photo") MultipartFile file) {
         return volunteerService.uploadProfilePhoto(id, file);
     }
 }

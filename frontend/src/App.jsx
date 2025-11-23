@@ -4,7 +4,7 @@ import Navbar from './Components/utils/Navbar';
 import Footer from './Components/utils/Footer';
 const publicAxiosInstance = axios.create({
   baseURL: 'http://localhost:8080/api/',
-  withCredentials: true, // If your backend requires credentials
+  withCredentials: false, // If your backend requires credentials
 });
 // all components can access publicAxiosInstance
 // example: publicAxiosInstance.get(`/blog?page=${page}&limit=6`)
