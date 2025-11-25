@@ -169,9 +169,7 @@
       "name": "Upload Request Photo",
       "request": {
         "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "multipart/form-data" }
-        ],
+        "header": [],
         "body": {
           "mode": "formdata",
           "formdata": [
@@ -184,6 +182,28 @@
           "host": ["localhost"],
           "port": "8080",
           "path": ["api", "request", "1", "photo"]
+        }
+      }
+    },
+    {
+      "name": "Upload Recipient Files",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "photo", "type": "file", "src": "" },
+            { "key": "certificate", "type": "file", "src": "" },
+            { "key": "signature", "type": "file", "src": "" }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/recipient/2/upload",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "recipient", "2", "upload"]
         }
       }
     }

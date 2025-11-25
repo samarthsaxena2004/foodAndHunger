@@ -1,0 +1,153 @@
+import React, { useState, useEffect } from 'react';
+import { Plus, Edit2, Trash2, MapPin } from 'lucide-react';
+import RequestForm from './RequestForm';
+
+const RequestList = ({ recipientId, axios }) => {
+    const [requests, setRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingRequest, setEditingRequest] = useState(null);
+
+    const fetchRequests = async () => {
+        try {
+            const res = await axios.get(`/request/recipient/${recipientId}`);
+            setRequests(res.data);
+        } catch (error) {
+            console.error("Error fetching requests:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchRequests();
+    }, [recipientId]);
+
+    const handleDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this request?")) {
+            try {
+                await axios.delete(`/request/delete/${id}`);
+                fetchRequests();
+            } catch (error) {
+                console.error("Error deleting request:", error);
+                alert("Failed to delete request");
+            }
+        }
+    };
+
+    const handleEdit = (request) => {
+        setEditingRequest(request);
+        setIsFormOpen(true);
+    };
+
+    const handleAddNew = () => {
+        setEditingRequest(null);
+        setIsFormOpen(true);
+    };
+
+    const handleFormClose = () => {
+        setIsFormOpen(false);
+        setEditingRequest(null);
+    };
+
+    const handleFormSuccess = () => {
+        handleFormClose();
+        fetchRequests();
+    };
+
+    if (loading) return <div className="text-center py-8">Loading requests...</div>;
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-800">My Requests</h2>
+                <button
+                    onClick={handleAddNew}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                    <Plus className="w-4 h-4" />
+                    Add Request
+                </button>
+            </div>
+
+            {requests.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                    <p className="text-gray-500 mb-4">You haven't made any requests yet.</p>
+                    <button
+                        onClick={handleAddNew}
+                        className="text-green-600 font-medium hover:underline"
+                    >
+                        Make your first request
+                    </button>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {requests.map((req) => (
+                        <div key={req.id} className="bg-white border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+                            {req.photo ? (
+                                <img
+                                    src={`http://localhost:8080/uploads/${req.photo}`}
+                                    alt={req.title}
+                                    className="w-full h-48 object-cover"
+                                    onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'; }}
+                                />
+                            ) : (
+                                <div className="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400">
+                                    No Image
+                                </div>
+                            )}
+                            <div className="p-5">
+                                <div className="flex justify-between items-start mb-2">
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium uppercase">
+                                        {req.type}
+                                    </span>
+                                    <span className={`px-2 py-1 text-xs rounded-full font-medium uppercase ${req.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                        {req.status || 'Active'}
+                                    </span>
+                                </div>
+                                <h3 className="font-bold text-lg text-gray-900 mb-2">{req.title}</h3>
+                                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{req.description}</p>
+
+                                <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
+                                    <MapPin className="w-4 h-4" />
+                                    <span className="truncate">{req.location}</span>
+                                </div>
+
+                                <div className="flex gap-2 pt-4 border-t">
+                                    <button
+                                        onClick={() => handleEdit(req)}
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium"
+                                    >
+                                        <Edit2 className="w-4 h-4" />
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(req.id)}
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {isFormOpen && (
+                <RequestForm
+                    isOpen={isFormOpen}
+                    onClose={handleFormClose}
+                    onSuccess={handleFormSuccess}
+                    request={editingRequest}
+                    recipientId={recipientId}
+                    axios={axios}
+                />
+            )}
+        </div>
+    );
+};
+
+export default RequestList;

@@ -18,7 +18,7 @@ public class DonationController implements ControllerStruct<DonationModel> {
     private DonationService donationService;
 
     //  Create donation with photo
-    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/add", consumes = { "multipart/form-data" })
     public ResponseEntity<String> createWithFile(
             @RequestParam("donorId") int donorId,
             @RequestParam("title") String title,
@@ -26,8 +26,7 @@ public class DonationController implements ControllerStruct<DonationModel> {
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "photo", required = false) MultipartFile photo,
             @RequestParam(value = "location", required = false) String location,
-            @RequestParam(value = "address", required = false) String address
-    ) {
+            @RequestParam(value = "address", required = false) String address) {
         try {
             DonationModel donation = new DonationModel();
             donation.setDonorId(donorId);
@@ -89,7 +88,7 @@ public class DonationController implements ControllerStruct<DonationModel> {
     }
 
     //  Upload photo separately
-    @PostMapping(value = "/{id}/photo", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/{id}/photo", consumes = { "multipart/form-data" })
     public ResponseEntity<DonationModel> uploadPhoto(@PathVariable int id, @RequestParam MultipartFile photo) {
         return donationService.uploadPhoto(id, photo);
     }
