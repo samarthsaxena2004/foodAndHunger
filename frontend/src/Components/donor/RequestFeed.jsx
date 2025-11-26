@@ -118,7 +118,7 @@ const RequestFeed = ({ axios }) => {
                         <div key={req.id} className="bg-white border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
                             {req.photo ? (
                                 <img
-                                    src={`http://localhost:8080/uploads/${req.photo}`}
+                                    src={`http://localhost:8080${req.photo}`}
                                     alt={req.title}
                                     className="w-full h-48 object-cover"
                                     onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'; }}

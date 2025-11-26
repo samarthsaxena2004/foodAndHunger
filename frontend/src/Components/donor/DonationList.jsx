@@ -86,7 +86,7 @@ const DonationList = ({ donorId, axios }) => {
                         <div key={donation.id} className="bg-white border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
                             {donation.photo ? (
                                 <img
-                                    src={`http://localhost:8080/uploads/${donation.photo}`}
+                                    src={`http://localhost:8080${donation.photo}`}
                                     alt={donation.title}
                                     className="w-full h-48 object-cover"
                                     onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'; }}

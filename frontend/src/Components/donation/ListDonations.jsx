@@ -17,7 +17,12 @@ const ListDonations = () => {
                 {donations.map((item) => (
                     <div key={item.id} className="flex flex-col w-full sm:w-[48%] lg:w-[30%] max-w-sm border border-gray-200 rounded-lg shadow hover:shadow-md transition">
 
-                        <img src={demo} alt={item.title} className="rounded-t-lg w-full h-48 object-cover" />
+                        <img
+                            src={item.photo ? `http://localhost:8080${item.photo}` : demo}
+                            alt={item.title}
+                            className="rounded-t-lg w-full h-48 object-cover"
+                            onError={(e) => { e.target.src = demo; }}
+                        />
 
                         <div className="p-5 text-center flex flex-col flex-grow">
 
