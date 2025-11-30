@@ -17,7 +17,7 @@ public class DonorController implements ControllerStruct<DonorModel> {
     private DonorService donorService;
 
     @PostMapping(value = "/add", consumes = { "multipart/form-data" })
-    public ResponseEntity<String> create(
+    public ResponseEntity<?> create(
             @ModelAttribute DonorModel entity,
             @RequestParam(value = "photo", required = false) MultipartFile photo,
             @RequestParam(value = "organizationCertificate", required = false) MultipartFile organizationCertificate,
@@ -31,19 +31,29 @@ public class DonorController implements ControllerStruct<DonorModel> {
         // Handle certificate alias (user might send 'certificate' or 'organizationCertificate')
         MultipartFile certFile = (organizationCertificate != null) ? organizationCertificate : certificate;
 
-        return donorService.create(entity, photo, certFile, signature)
-                ? ResponseEntity.ok("Donor added successfully")
-                : ResponseEntity.status(400).body("Failed to add donor");
+        try {
+            donorService.create(entity, photo, certFile, signature);
+            return ResponseEntity.ok(entity);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Failed to add donor: " + e.getMessage());
+        }
     }
 
     @PostMapping(value = "/add", consumes = "application/json")
-    public ResponseEntity<String> createJson(@RequestBody DonorModel entity) {
+    public ResponseEntity<?> createJson(@RequestBody DonorModel entity) {
         if (!donorService.isUserPresent(entity.getUserId())) {
             return ResponseEntity.status(400).body("User not present");
         }
-        return donorService.create(entity)
-                ? ResponseEntity.ok("Donor added successfully")
-                : ResponseEntity.status(400).body("Failed to add donor");
+        try {
+            donorService.create(entity);
+            return ResponseEntity.ok(entity);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Failed to add donor: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")

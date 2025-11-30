@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="donors")
+@Table(name = "donors")
 @Getter
 @Setter
 public class DonorModel {
@@ -35,11 +35,14 @@ public class DonorModel {
     private String organization_certificate_id;
 
     private String organizationCertificate; // path to uploaded certificate
-    private String photo;                   // donor photo path
-    private String signature;               // donor signature path
+    private String photo; // donor photo path
+    private String signature; // donor signature path
 
-    private String status = "pending";      // pending | verified | rejected
-    private String remarks;                 // admin remark
+    private String status = "pending"; // pending | verified | rejected
+    private String remarks; // admin remark
+    private Double latitude;
+    private Double longitude;
+    private Boolean consent;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -47,5 +50,6 @@ public class DonorModel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public DonorModel() {}
+    public DonorModel() {
+    }
 }

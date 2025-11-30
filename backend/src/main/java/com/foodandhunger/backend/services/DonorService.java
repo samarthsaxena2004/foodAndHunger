@@ -50,6 +50,9 @@ public class DonorService implements ServicesStruct<DonorModel> {
             donor.setEmail(entity.getEmail());
             donor.setStatus(entity.getStatus());
             donor.setRemarks(entity.getRemarks());
+            donor.setLatitude(entity.getLatitude());
+            donor.setLongitude(entity.getLongitude());
+            donor.setConsent(entity.getConsent());
             donorRepo.save(donor);
             return true;
         } catch (Exception e) {
@@ -61,18 +64,19 @@ public class DonorService implements ServicesStruct<DonorModel> {
     public boolean create(DonorModel entity, MultipartFile photo, MultipartFile certificate, MultipartFile signature) {
         try {
             if (donorRepo.existsByEmail(entity.getEmail())) {
-                LLogging.warn("Duplicate donor email");
-                return false;
+                throw new IllegalArgumentException("Duplicate donor email");
             }
 
             if (entity.getPhone() != null && donorRepo.existsByPhone(entity.getPhone())) {
-                LLogging.warn("Duplicate donor phone");
-                return false;
+                throw new IllegalArgumentException("Duplicate donor phone");
             }
 
             if (entity.getAadhaar() != null && donorRepo.existsByAadhaar(entity.getAadhaar())) {
-                LLogging.warn("Duplicate donor Aadhaar");
-                return false;
+                throw new IllegalArgumentException("Duplicate donor Aadhaar");
+            }
+
+            if (entity.getPan() != null && donorRepo.existsByPan(entity.getPan())) {
+                throw new IllegalArgumentException("Duplicate donor PAN");
             }
 
             // Save first to get ID (though we use userId for folder)
@@ -90,9 +94,11 @@ public class DonorService implements ServicesStruct<DonorModel> {
             donorRepo.save(entity);
             return true;
 
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             LLogging.error("create failed: " + e.getMessage());
-            return false;
+            throw new RuntimeException("Failed to create donor: " + e.getMessage());
         }
     }
 

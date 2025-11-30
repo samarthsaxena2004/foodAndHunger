@@ -47,6 +47,9 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
             existing.setOrganization_certificate_id(entity.getOrganization_certificate_id());
             existing.setStatus(entity.getStatus());
             existing.setRemarks(entity.getRemarks());
+            existing.setLatitude(entity.getLatitude());
+            existing.setLongitude(entity.getLongitude());
+            existing.setConsent(entity.getConsent());
 
             recipientRepo.save(existing);
             return true;
@@ -60,33 +63,36 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
     public boolean create(RecipientModel entity) {
         try {
             if (recipientRepo.existsByEmail(entity.getEmail())) {
-                LLogging.warn("Duplicate recipient email");
-                return false;
+                throw new IllegalArgumentException("Duplicate recipient email");
             }
 
             if (entity.getPhone() != null && recipientRepo.existsByPhone(entity.getPhone())) {
-                LLogging.warn("Duplicate recipient phone");
-                return false;
+                throw new IllegalArgumentException("Duplicate recipient phone");
             }
 
             if (entity.getAadhaar() != null && recipientRepo.existsByAadhaar(entity.getAadhaar())) {
-                LLogging.warn("Duplicate recipient Aadhaar");
-                return false;
+                throw new IllegalArgumentException("Duplicate recipient Aadhaar");
+            }
+
+            if (entity.getPan() != null && recipientRepo.existsByPan(entity.getPan())) {
+                throw new IllegalArgumentException("Duplicate recipient PAN");
             }
 
             recipientRepo.save(entity);
             return true;
 
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             LLogging.error("Create failed: " + e.getMessage());
-            return false;
+            throw new RuntimeException("Failed to create recipient: " + e.getMessage());
         }
     }
 
-
     @Override
     public boolean delete(int id) {
-        if (!recipientRepo.existsById(id)) return false;
+        if (!recipientRepo.existsById(id))
+            return false;
         recipientRepo.deleteById(id);
         return true;
     }
@@ -108,17 +114,20 @@ public class RecipientService implements ServicesStruct<RecipientModel> {
 
     //  Upload recipient files
     public ResponseEntity<RecipientModel> uploadFiles(int recipientId, MultipartFile photo,
-                                                      MultipartFile certificate, MultipartFile signature) {
+            MultipartFile certificate, MultipartFile signature) {
         try {
             RecipientModel recipient = recipientRepo.findById(recipientId)
                     .orElseThrow(() -> new RuntimeException("Recipient not found"));
 
             if (photo != null)
-                recipient.setPhoto(FileUploadUtil.saveUserFile("uploads/recipients", recipient.getUserId(), photo, "photo"));
+                recipient.setPhoto(
+                        FileUploadUtil.saveUserFile("uploads/recipients", recipient.getUserId(), photo, "photo"));
             if (certificate != null)
-                recipient.setOrganizationCertificate(FileUploadUtil.saveUserFile("uploads/recipients", recipient.getUserId(), certificate, "certificate"));
+                recipient.setOrganizationCertificate(FileUploadUtil.saveUserFile("uploads/recipients",
+                        recipient.getUserId(), certificate, "certificate"));
             if (signature != null)
-                recipient.setSignature(FileUploadUtil.saveUserFile("uploads/recipients", recipient.getUserId(), signature, "signature"));
+                recipient.setSignature(FileUploadUtil.saveUserFile("uploads/recipients", recipient.getUserId(),
+                        signature, "signature"));
 
             recipientRepo.save(recipient);
             return ResponseEntity.ok(recipient);

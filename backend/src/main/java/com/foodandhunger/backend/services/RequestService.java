@@ -45,6 +45,8 @@ public class RequestService implements ServicesStruct<RequestModel> {
             existing.setAmount(entity.getAmount());
             existing.setAddress(entity.getAddress());
             existing.setLocation(entity.getLocation());
+            existing.setLatitude(entity.getLatitude());
+            existing.setLongitude(entity.getLongitude());
             existing.setStatus(entity.getStatus());
             requestRepo.save(existing);
             return true;
@@ -56,23 +58,27 @@ public class RequestService implements ServicesStruct<RequestModel> {
 
     @Override
     public boolean create(RequestModel entity) {
+        return createReturnEntity(entity) != null;
+    }
+
+    public RequestModel createReturnEntity(RequestModel entity) {
         try {
             if (!recipientRepo.existsById(entity.getRecipientId())) {
                 LLogging.warn("Recipient not found");
-                return false;
+                return null;
             }
 
-            if (requestRepo.existsByRecipientIdAndTitle(entity.getRecipientId(), entity.getTitle())) {
-                LLogging.warn("Duplicate request ignored");
-                return false;
-            }
+            // Removed duplicate check to allow multiple requests with same title
+            // if (requestRepo.existsByRecipientIdAndTitle(entity.getRecipientId(), entity.getTitle())) {
+            //     LLogging.warn("Duplicate request ignored");
+            //     return null;
+            // }
 
-            requestRepo.save(entity);
-            return true;
+            return requestRepo.save(entity);
 
         } catch (Exception e) {
             LLogging.error("create failed: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -115,18 +121,18 @@ public class RequestService implements ServicesStruct<RequestModel> {
     }
 
     //  New: Upload photo for a request
-    public ResponseEntity<RequestModel> uploadPhoto(int requestId, MultipartFile photo) {
+    public ResponseEntity<?> uploadPhoto(int requestId, MultipartFile photo) {
         try {
             RequestModel req = requestRepo.findById(requestId)
                     .orElseThrow(() -> new RuntimeException("Request not found"));
-            String photoPath = FileUploadUtil.saveUserFile("uploads/requests", req.getRecipientId(), photo,
+            String photoPath = FileUploadUtil.saveUserFile("uploads/requests", req.getId(), photo,
                     req.getTitle());
             req.setPhoto(photoPath);
             requestRepo.save(req);
             return ResponseEntity.ok(req);
         } catch (Exception e) {
             LLogging.error("photo upload failed: " + e.getMessage());
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
     }
 }

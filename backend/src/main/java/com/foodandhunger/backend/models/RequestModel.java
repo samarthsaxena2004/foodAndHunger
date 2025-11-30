@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "requests")
+@Table(name = "food_requests")
 @Getter
 @Setter
 public class RequestModel {
@@ -17,7 +17,6 @@ public class RequestModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(unique = true)
     private String title;
     private String description;
     private double amount;
@@ -26,7 +25,8 @@ public class RequestModel {
     private String type; // e.g. veg, non-veg
     private String status = "pending"; // pending | approved | completed
     private String photo; // optional image of requested item
-    @Column(unique = true)
+    private double latitude;
+    private double longitude;
     private int recipientId; // who created this request
 
     @CreationTimestamp

@@ -17,10 +17,15 @@ public class RecipientController implements ControllerStruct<RecipientModel> {
     private RecipientService recipientService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> create(@RequestBody RecipientModel entity) {
-        return recipientService.create(entity)
-                ? ResponseEntity.ok("Recipient added successfully")
-                : ResponseEntity.status(400).body("Failed to add recipient");
+    public ResponseEntity<?> create(@RequestBody RecipientModel entity) {
+        try {
+            recipientService.create(entity);
+            return ResponseEntity.ok(entity);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Failed to add recipient: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
@@ -64,7 +69,7 @@ public class RecipientController implements ControllerStruct<RecipientModel> {
     }
 
     //  Upload photo, certificate, signature
-    @PostMapping(value = "/{id}/upload", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/{id}/upload", consumes = { "multipart/form-data" })
     public ResponseEntity<RecipientModel> uploadFiles(
             @PathVariable int id,
             @RequestParam(required = false) MultipartFile photo,

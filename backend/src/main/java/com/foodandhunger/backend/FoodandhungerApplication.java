@@ -8,5 +8,3 @@ public class FoodandhungerApplication {
 		SpringApplication.run(FoodandhungerApplication.class, args);
 	}
 }
-
-

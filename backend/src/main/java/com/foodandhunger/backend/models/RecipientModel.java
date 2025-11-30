@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="recipients")
+@Table(name = "recipients")
 @Getter
 @Setter
 public class RecipientModel {
@@ -18,7 +18,7 @@ public class RecipientModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int userId;                      // linked to user table
+    private int userId; // linked to user table
     private String name;
     private int age;
     private String address;
@@ -34,12 +34,15 @@ public class RecipientModel {
     private String location;
 
     private String organization_certificate_id;
-    private String organizationCertificate;  // file path
-    private String photo;                    // profile photo path
-    private String signature;                // signature image path
+    private String organizationCertificate; // file path
+    private String photo; // profile photo path
+    private String signature; // signature image path
 
-    private String status = "pending";       // pending | verified | rejected
-    private String remarks;                  // admin remarks for verification
+    private String status = "pending"; // pending | verified | rejected
+    private String remarks; // admin remarks for verification
+    private Double latitude;
+    private Double longitude;
+    private Boolean consent;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -47,5 +50,6 @@ public class RecipientModel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public RecipientModel() {}
+    public RecipientModel() {
+    }
 }

@@ -51,27 +51,30 @@ public class DonationService implements ServicesStruct<DonationModel> {
 
     @Override
     public boolean create(DonationModel entity) {
+        return createReturnEntity(entity) != null;
+    }
+
+    public DonationModel createReturnEntity(DonationModel entity) {
         try {
             boolean exists = donationRepo.existsByTitleAndDonorId(
-                    entity.getTitle(), entity.getDonorId()
-            );
+                    entity.getTitle(), entity.getDonorId());
 
             if (exists) {
                 LLogging.warn("Duplicate donation ignored");
-                return false;
+                return null;
             }
 
-            donationRepo.save(entity);
-            return true;
+            return donationRepo.save(entity);
         } catch (Exception e) {
             LLogging.error("create failed: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 
     @Override
     public boolean delete(int id) {
-        if (!donationRepo.existsById(id)) return false;
+        if (!donationRepo.existsById(id))
+            return false;
         donationRepo.deleteById(id);
         return true;
     }
@@ -79,8 +82,7 @@ public class DonationService implements ServicesStruct<DonationModel> {
     @Override
     public ResponseEntity<List<DonationModel>> search(String query) {
         return ResponseEntity.ok(
-                donationRepo.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query)
-        );
+                donationRepo.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query));
     }
 
     @Override
@@ -94,16 +96,17 @@ public class DonationService implements ServicesStruct<DonationModel> {
     }
 
     //  Upload photo
-    public ResponseEntity<DonationModel> uploadPhoto(int donationId, MultipartFile photo) {
+    public ResponseEntity<?> uploadPhoto(int donationId, MultipartFile photo) {
         try {
             DonationModel donation = donationRepo.findById(donationId)
                     .orElseThrow(() -> new RuntimeException("Donation not found"));
-            String path = FileUploadUtil.saveUserFile("uploads/donations", donation.getDonorId(), photo, donation.getTitle());
+            String path = FileUploadUtil.saveUserFile("uploads/donations", donation.getId(), photo,
+                    donation.getTitle());
             donation.setPhoto(path);
             donationRepo.save(donation);
             return ResponseEntity.ok(donation);
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
     }
 
