@@ -15,103 +15,108 @@ import About from './pages/main/About';
 import JoinUs from './pages/Auth/JoinUs';
 import VDashboard from './pages/volunteer/VDashboard';
 import VolunteerDetail from './pages/volunteer/VolunteerDetail';
+import Volunteer from './Components/volunteer/Volunteer';
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    ErrorElement: <CustomError />, // create custom error component and change it
-    children: [
-      {
-        index: true,
-        element: <Home /> // check if user logged in if yes, pass the param
-      },
-      {
-        path: "about",
-        element: <About />
-      }
-    ]
-  },
-  {
-    path: "/donors",
-    element: <App />,
-    ErrorElement: <CustomError />,
-    // ErrorElement: <Error />, // create custom error component and change it
-    children: [
-      {
-        path: "dashboard",
-        element: <DDashboard />
-      },
-      {
-        path: "details/:donor_id",
-        element: <DonorDetail />
-      },
-    ]
-  },
-  {
-    path: "/recipients",
-    element: <App />,
-    ErrorElement: <CustomError />, // create custom error component and change it
-    children: [
-      {
-        path: "dashboard",
-        element: <RDashboard />
-      },
-      {
-        path: "details/:recipient_id",
-        element: <RecipientDetail />
-      },
-    ]
-  },
-  {
-    path: "/volunteers",
-    element: <App />,
-    ErrorElement: <CustomError />, // create custom error component and change it
-    children: [
-      {
-        path: "dashboard",
-        element: <VDashboard />
-      },
-      {
-        path: "details/:volunteer_id",
-        element: <VolunteerDetail />
-      },
-    ]
-  },
-  {
-    path: "/auth",
-    element: <App />,
-    ErrorElement: <CustomError />, // create custom error component and change it
-    children: [
-      {
-        path: "login",
-        element: <Login />
-      },
-      {
-        path: "recipient/register",
-        element: <Register />
-      },
-      {
-        path: "donor/register",
-        element: <Register />
-      },
-      {
-        path: "register",
-        element: <Register />
-      },
-      {
-        path: "join_us",
-        element: <JoinUs />
-      },
-    ]
-  }
+    {
+        path: "/",
+        element: <App />,
+        ErrorElement: <CustomError />, // create custom error component and change it
+        children: [
+            {
+                index: true,
+                element: <Home /> // check if user logged in if yes, pass the param
+            },
+            {
+                path: "about",
+                element: <About />
+            },
+            {
+                path: "volunteer",
+                element: <Volunteer />
+            }
+        ]
+    },
+    {
+        path: "/donors",
+        element: <App />,
+        ErrorElement: <CustomError />,
+        // ErrorElement: <Error />, // create custom error component and change it
+        children: [
+            {
+                path: "dashboard",
+                element: <DDashboard />
+            },
+            {
+                path: "details/:donor_id",
+                element: <DonorDetail />
+            },
+        ]
+    },
+    {
+        path: "/recipients",
+        element: <App />,
+        ErrorElement: <CustomError />, // create custom error component and change it
+        children: [
+            {
+                path: "dashboard",
+                element: <RDashboard />
+            },
+            {
+                path: "details/:recipient_id",
+                element: <RecipientDetail />
+            },
+        ]
+    },
+    {
+        path: "/volunteers",
+        element: <App />,
+        ErrorElement: <CustomError />, // create custom error component and change it
+        children: [
+            {
+                path: "dashboard",
+                element: <VDashboard />
+            },
+            {
+                path: "details/:volunteer_id",
+                element: <VolunteerDetail />
+            },
+        ]
+    },
+    {
+        path: "/auth",
+        element: <App />,
+        ErrorElement: <CustomError />, // create custom error component and change it
+        children: [
+            {
+                path: "login",
+                element: <Login />
+            },
+            {
+                path: "recipient/register",
+                element: <Register />
+            },
+            {
+                path: "donor/register",
+                element: <Register />
+            },
+            {
+                path: "register",
+                element: <Register />
+            },
+            {
+                path: "join_us",
+                element: <JoinUs />
+            },
+        ]
+    }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    {/* <App /> */}
-    <RouterProvider router={router} />
-  </React.StrictMode>
+    <React.StrictMode>
+        {/* <App /> */}
+        <RouterProvider router={router} />
+    </React.StrictMode>
 
 );
 

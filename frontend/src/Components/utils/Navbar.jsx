@@ -71,7 +71,8 @@ const Navbar = () => {
 
             // Check Volunteer
             try {
-                const volunteerRes = await axios.get(`http://localhost:8080/api/volunteer/user/${userId}`);
+                // For volunteers, userId in localStorage is the volunteerId itself
+                const volunteerRes = await axios.get(`http://localhost:8080/api/volunteer/${userId}`);
                 if (volunteerRes.data) {
                     setRoleState('volunteer', volunteerRes.data.id);
                     return;
@@ -158,6 +159,8 @@ const Navbar = () => {
                                 <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-600 rounded-full transition-all duration-300 ${activeLink === "/" ? "opacity-100 scale-100" : "opacity-0 scale-0"
                                     }`}></span>
                             </Link>
+                        </li>
+                        <li>
                             <Link
                                 to="/about"
                                 onClick={() => handleLinkClick("about")}
@@ -170,24 +173,19 @@ const Navbar = () => {
                                     }`}></span>
                             </Link>
                         </li>
-                        {navItems.map((item) => {
-                            const path = `/${item.toLowerCase()}`;
-                            return (
-                                <li key={item}>
-                                    <Link
-                                        to={`${path}/dashboard`}
-                                        onClick={() => handleLinkClick(path)}
-                                        className={`relative px-5 py-2.5 rounded-xl hover:text-green-600 transition-all duration-300 group overflow-hidden ${activeLink === path ? "text-green-600" : ""
-                                            }`}
-                                    >
-                                        <span className="absolute inset-0 bg-green-50 dark:bg-green-900/10 scale-0 group-hover:scale-100 transition-transform duration-300 rounded-xl"></span>
-                                        <span className="relative z-10">{item}</span>
-                                        <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-600 rounded-full transition-all duration-300 ${activeLink === path ? "opacity-100 scale-100" : "opacity-0 scale-0"
-                                            }`}></span>
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                        <li>
+                            <Link
+                                to="/volunteer"
+                                onClick={() => handleLinkClick("/volunteer")}
+                                className={`relative px-5 py-2.5 rounded-xl hover:text-green-600 transition-all duration-300 group overflow-hidden ${activeLink === "/volunteer" ? "text-green-600" : ""
+                                    }`}
+                            >
+                                <span className="absolute inset-0 bg-green-50 dark:bg-green-900/10 scale-0 group-hover:scale-100 transition-transform duration-300 rounded-xl"></span>
+                                <span className="relative z-10">Volunteers</span>
+                                <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-600 rounded-full transition-all duration-300 ${activeLink === "/volunteer" ? "opacity-100 scale-100" : "opacity-0 scale-0"
+                                    }`}></span>
+                            </Link>
+                        </li>
                     </ul>
 
                     {/* Right Section */}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, Upload, MapPin, Check, Loader2, User, Building2 } from 'lucide-react';
+import { X, Upload, MapPin, Check, Loader2, User, Building2, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -21,7 +21,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
     const [step, setStep] = useState(1);
-    const [role, setRole] = useState('donor'); // 'donor' or 'recipient'
+    const [role, setRole] = useState('donor'); // 'donor', 'recipient', 'volunteer'
     const [loading, setLoading] = useState(false);
     const [registeredId, setRegisteredId] = useState(null);
 
@@ -42,7 +42,12 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
         longitude: null,
         organization_certificate_id: '',
         remarks: '',
-        consent: false
+        consent: false,
+        // Volunteer specific
+        availability: '',
+        skills: '',
+        reason: '',
+        emergencyContactPhone: ''
     });
 
     // File State
@@ -183,51 +188,103 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
         setLoading(true);
 
         const userId = localStorage.getItem('userId');
-        if (!userId) {
+        // Only require login for donor and recipient
+        if (role !== 'volunteer' && !userId) {
             toast.error("User not logged in. Please login first.");
             setLoading(false);
             return;
         }
 
         try {
-            const payload = {
-                userId: Number(userId),
-                name: formData.name,
-                age: Number(formData.age),
-                address: formData.address,
-                organizationName: formData.organizationName,
-                pan: formData.panNumber,
-                aadhaar: formData.aadhaarNumber,
-                phone: formData.phone,
-                email: formData.email,
-                location: formData.location,
-                latitude: formData.latitude,
-                longitude: formData.longitude,
-                remarks: formData.remarks,
-                organization_certificate_id: formData.organization_certificate_id ? Number(formData.organization_certificate_id) : null,
-                consent: formData.consent
-            };
+            let payload = {};
+            let endpoint = '';
 
-            const endpoint = role === 'donor' ? 'http://localhost:8080/api/donor/add' : 'http://localhost:8080/api/recipient/add';
+            if (role === 'volunteer') {
+                payload = {
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    address: formData.address,
+                    location: formData.location,
+                    aadhaarCard: formData.aadhaarNumber,
+                    panCard: formData.panNumber,
+                    availability: formData.availability,
+                    skills: formData.skills,
+                    reason: formData.reason,
+                    emergencyContactPhone: formData.emergencyContactPhone
+                };
+                endpoint = 'http://localhost:8080/api/volunteer/add';
+            } else {
+                payload = {
+                    userId: Number(userId),
+                    name: formData.name,
+                    age: Number(formData.age),
+                    address: formData.address,
+                    organizationName: formData.organizationName,
+                    pan: formData.panNumber,
+                    aadhaar: formData.aadhaarNumber,
+                    phone: formData.phone,
+                    email: formData.email,
+                    location: formData.location,
+                    latitude: formData.latitude,
+                    longitude: formData.longitude,
+                    remarks: formData.remarks,
+                    organization_certificate_id: formData.organization_certificate_id ? Number(formData.organization_certificate_id) : null,
+                    consent: formData.consent
+                };
+                endpoint = role === 'donor' ? 'http://localhost:8080/api/donor/add' : 'http://localhost:8080/api/recipient/add';
+            }
 
             const response = await axios.post(endpoint, payload);
 
-            if (response.data) {
-                const newId = response.data.id || response.data.donorId || response.data.recipientId || response.data;
+            if (role === 'volunteer') {
+                // Volunteer backend returns a string message, not the object/ID.
+                // We need to fetch the ID to proceed to upload.
+                if (response.status === 200) {
+                    try {
+                        // Search for the volunteer by name to get the ID
+                        const searchResponse = await axios.get(`http://localhost:8080/api/volunteer/search?query=${formData.name}`);
+                        const volunteers = searchResponse.data;
 
-                if (typeof newId === 'object') {
-                    if (newId.id) setRegisteredId(newId.id);
-                    else throw new Error("ID not found in response");
-                } else {
-                    setRegisteredId(newId);
+                        // Find the one with the matching email
+                        const createdVolunteer = volunteers.find(v => v.email === formData.email);
+
+                        if (createdVolunteer && createdVolunteer.id) {
+                            setRegisteredId(createdVolunteer.id);
+                            setStep(2);
+                            toast.success("Registration successful! Please upload documents.");
+                        } else {
+                            throw new Error("Could not retrieve volunteer ID after registration.");
+                        }
+                    } catch (searchErr) {
+                        console.error("Error fetching volunteer ID:", searchErr);
+                        toast.error("Registration successful, but failed to retrieve ID for upload. Please contact support.");
+                    }
                 }
+            } else {
+                // Donor/Recipient flow (returns ID or object)
+                if (response.data) {
+                    const newId = response.data.id || response.data.donorId || response.data.recipientId || response.data;
 
-                setStep(2);
-                toast.success("Registration successful! Please upload documents.");
+                    if (typeof newId === 'object') {
+                        if (newId.id) setRegisteredId(newId.id);
+                        else throw new Error("ID not found in response");
+                    } else {
+                        setRegisteredId(newId);
+                    }
+
+                    setStep(2);
+                    toast.success("Registration successful! Please upload documents.");
+                }
             }
         } catch (err) {
             console.error(err);
-            const errorMsg = err.response?.data?.message || (typeof err.response?.data === 'string' ? err.response?.data : "Registration failed. Please try again.");
+            let errorMsg = err.response?.data?.message || (typeof err.response?.data === 'string' ? err.response?.data : "Registration failed. Please try again.");
+
+            if (errorMsg === "Failed to add volunteer") {
+                errorMsg = "Registration failed. Email, Phone, Aadhaar, or PAN might already be registered.";
+            }
+
             toast.error(errorMsg);
         } finally {
             setLoading(false);
@@ -244,9 +301,14 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
             if (files.certificate && (role === 'donor' || role === 'recipient')) formDataUpload.append('certificate', files.certificate);
             if (files.signature) formDataUpload.append('signature', files.signature);
 
-            const endpoint = role === 'donor'
-                ? `http://localhost:8080/api/donor/${registeredId}/upload`
-                : `http://localhost:8080/api/recipient/${registeredId}/upload`;
+            let endpoint = '';
+            if (role === 'volunteer') {
+                endpoint = `http://localhost:8080/api/volunteer/${registeredId}/photo`;
+            } else {
+                endpoint = role === 'donor'
+                    ? `http://localhost:8080/api/donor/${registeredId}/upload`
+                    : `http://localhost:8080/api/recipient/${registeredId}/upload`;
+            }
 
             await axios.post(endpoint, formDataUpload, {
                 headers: {
@@ -254,20 +316,30 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
                 }
             });
 
-            toast.success("Documents uploaded successfully! Registration complete.");
-
             // Update Local Storage and Notify Parent
             localStorage.setItem('is_registered', 'true');
             localStorage.setItem('role', role);
             localStorage.setItem('roleId', registeredId);
 
+            if (role === 'volunteer') {
+                localStorage.setItem('logged_in', 'true');
+                localStorage.setItem('userId', registeredId);
+            }
+
             if (onRegistrationSuccess) {
                 onRegistrationSuccess();
             }
 
+            toast.success("Documents uploaded successfully! Registration complete.");
+
             setTimeout(() => {
                 onClose();
-            }, 2000);
+                if (role === 'volunteer') {
+                    window.location.href = '/volunteers/dashboard';
+                } else {
+                    window.location.reload();
+                }
+            }, 1500);
 
         } catch (err) {
             console.error(err);
@@ -306,7 +378,7 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
                     {step === 1 && (
                         <div className="mb-8">
                             <label className="block text-sm font-medium text-gray-700 mb-3">Register As</label>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-3 gap-4">
                                 <button
                                     type="button"
                                     onClick={() => setRole('donor')}
@@ -328,6 +400,17 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
                                 >
                                     <Building2 className="w-8 h-8" />
                                     <span className="font-semibold">Recipient</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setRole('volunteer')}
+                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${role === 'volunteer'
+                                        ? 'border-green-500 bg-green-50 text-green-700'
+                                        : 'border-gray-200 hover:border-green-200 text-gray-600'
+                                        }`}
+                                >
+                                    <Heart className="w-8 h-8" />
+                                    <span className="font-semibold">Volunteer</span>
                                 </button>
                             </div>
                         </div>
@@ -432,17 +515,74 @@ const RegistrationModal = ({ isOpen, onClose, onRegistrationSuccess }) => {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Organization Name {role === 'recipient' && '(Optional)'}</label>
-                                <input
-                                    type="text"
-                                    name="organizationName"
-                                    value={formData.organizationName}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="Helping Hands"
-                                />
-                            </div>
+                            {role !== 'volunteer' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Organization Name {role === 'recipient' && '(Optional)'}</label>
+                                    <input
+                                        type="text"
+                                        name="organizationName"
+                                        value={formData.organizationName}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                        placeholder="Helping Hands"
+                                    />
+                                </div>
+                            )}
+
+                            {role === 'volunteer' && (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Availability</label>
+                                            <input
+                                                type="text"
+                                                name="availability"
+                                                required
+                                                value={formData.availability}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                                placeholder="e.g. Weekends"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Skills</label>
+                                            <input
+                                                type="text"
+                                                name="skills"
+                                                required
+                                                value={formData.skills}
+                                                onChange={handleInputChange}
+                                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                                placeholder="e.g. Driving"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Emergency Contact</label>
+                                        <input
+                                            type="tel"
+                                            name="emergencyContactPhone"
+                                            required
+                                            value={formData.emergencyContactPhone}
+                                            onChange={handleInputChange}
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                            placeholder="Emergency Phone"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Why do you want to volunteer?</label>
+                                        <textarea
+                                            name="reason"
+                                            required
+                                            value={formData.reason}
+                                            onChange={handleInputChange}
+                                            rows="2"
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                            placeholder="Share your motivation..."
+                                        />
+                                    </div>
+                                </>
+                            )}
 
                             {role === 'donor' && formData.organizationName && (
                                 <div>

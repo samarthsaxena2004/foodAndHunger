@@ -54,8 +54,10 @@ const HomePageCrousel = () => {
                             Food & Hunger
                         </span>
                     </h1>
-                    <p className="text-xl md:text-2xl mb-6 font-light animate-slide-up opacity-0" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-
+                    <p className="text-xl md:text-2xl font-medium text-green-100 mb-4 animate-slide-down" style={{ animationDelay: '0.1s' }}>
+                        Connecting Communities, Ending Hunger
+                    </p>
+                    <p className="text-lg md:text-xl mb-6 font-light animate-slide-up opacity-0 max-w-2xl mx-auto" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
                         FoodAndHunger connects restaurants, shops, and households with nearby NGOs to donate surplus food using a smart, location-based platform.
                         It reduces food waste while ensuring fresh meals reach people in need quickly and safely.
                     </p>
