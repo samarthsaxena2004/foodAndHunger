@@ -48,10 +48,20 @@ const VDashboard = () => {
 
             // Fetch Donations
             const donationsRes = await publicAxiosInstance.get('/donation/all');
+            // Filter only admin-approved donations and exclude completed ones
+            // const approvedDonations = donationsRes.data.filter(d =>
+            //     (d.approved === true || d.status === 'approved') && d.status !== 'completed'
+            // );
+            // setDonations(approvedDonations);
             setDonations(donationsRes.data);
 
             // Fetch Requests
             const requestsRes = await publicAxiosInstance.get('/request/all');
+            // Filter only admin-approved donations and exclude completed ones
+            // const approvedRequests = requestsRes.data.filter(d =>
+            //     (d.approved === true || d.status === 'approved') && d.status !== 'completed'
+            // );
+            // setRequests(approvedRequests);
             setRequests(requestsRes.data);
 
         } catch (error) {
@@ -143,8 +153,8 @@ const VDashboard = () => {
             // Let's show 'approved' and 'pending' for now, or just 'approved' if admin workflow exists.
             // Based on previous context, admin approves things. So volunteers should see 'approved'.
             items = [
-                ...normDonations.filter(d => d.status === 'approved' || d.status === 'pending'),
-                ...normRequests.filter(r => r.status === 'approved' || r.status === 'pending')
+                ...normDonations.filter(d => d.status === 'approved'),
+                ...normRequests.filter(r => r.status === 'approved')
             ];
         } else if (activeTab === 'active') {
             // Out for delivery
@@ -243,7 +253,7 @@ const VDashboard = () => {
                                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm">
                                         {item.type}
                                     </div>
-                                    {item.distance !== Infinity && (
+                                    {typeof item.distance === 'number' && item.distance !== Infinity && (
                                         <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-full text-xs flex items-center gap-1">
                                             <Navigation className="w-3 h-3" />
                                             {item.distance.toFixed(1)} km away
@@ -255,9 +265,9 @@ const VDashboard = () => {
                                     <div className="flex justify-between items-start mb-2">
                                         <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{item.title}</h3>
                                         <span className={`px-2 py-1 rounded text-xs font-medium uppercase ${item.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                                item.status === 'out_for_delivery' ? 'bg-blue-100 text-blue-800' :
-                                                    item.status === 'completed' ? 'bg-gray-100 text-gray-800' :
-                                                        'bg-yellow-100 text-yellow-800'
+                                            item.status === 'out_for_delivery' ? 'bg-blue-100 text-blue-800' :
+                                                item.status === 'completed' ? 'bg-gray-100 text-gray-800' :
+                                                    'bg-yellow-100 text-yellow-800'
                                             }`}>
                                             {item.status}
                                         </span>
@@ -312,5 +322,4 @@ const VDashboard = () => {
         </div>
     );
 };
-
 export default VDashboard;

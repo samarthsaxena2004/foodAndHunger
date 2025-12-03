@@ -16,7 +16,7 @@ const RequestList = ({ recipientId, axios, recipientProfile }) => {
             const res = await axios.get(`/request/recipient/${recipientId}`);
             const requestData = res.data;
             setRequests(requestData);
-            
+
             // Calculate statistics
             const totalPeople = requestData.reduce((sum, req) => sum + (parseInt(req.amount) || 0), 0);
             const calculatedStats = {
@@ -141,19 +141,19 @@ const RequestList = ({ recipientId, axios, recipientProfile }) => {
                 </button>
             </div>
 
-            {requests.length === 0 ? (
+            {requests.filter(r => r.status !== 'completed').length === 0 ? (
                 <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                    <p className="text-gray-500 mb-4">You haven't made any requests yet.</p>
+                    <p className="text-gray-500 mb-4">You haven't made any active requests yet.</p>
                     <button
                         onClick={handleAddNew}
                         className="text-green-600 font-medium hover:underline"
                     >
-                        Make your first request
+                        Make a request
                     </button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {requests.map((req) => (
+                    {requests.filter(r => r.status !== 'completed').map((req) => (
                         <div key={req.id} className="bg-white border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
                             {req.photo ? (
                                 <img
@@ -188,14 +188,22 @@ const RequestList = ({ recipientId, axios, recipientProfile }) => {
                                 <div className="flex gap-2 pt-4 border-t">
                                     <button
                                         onClick={() => handleEdit(req)}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium"
+                                        disabled={req.status === 'out_for_delivery' || req.status === 'completed'}
+                                        className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${req.status === 'out_for_delivery' || req.status === 'completed'
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                                            }`}
                                     >
                                         <Edit2 className="w-4 h-4" />
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => handleDelete(req.id)}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+                                        disabled={req.status === 'out_for_delivery' || req.status === 'completed'}
+                                        className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${req.status === 'out_for_delivery' || req.status === 'completed'
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-red-50 text-red-600 hover:bg-red-100'
+                                            }`}
                                     >
                                         <Trash2 className="w-4 h-4" />
                                         Delete
